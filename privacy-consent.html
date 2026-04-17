@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Confidentialité - WAFRIK</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 500px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 32px 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .logo {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        
+        .logo h1 {
+            color: #fff;
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .logo span {
+            color: #ff6b6b;
+        }
+        
+        .icon {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 48px;
+        }
+        
+        h2 {
+            color: #fff;
+            font-size: 22px;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+        
+        p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .info-box {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 24px;
+            border-left: 4px solid #ff6b6b;
+        }
+        
+        .info-box p {
+            text-align: left;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+        
+        .info-box p:last-child {
+            margin-bottom: 0;
+        }
+        
+        .buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .btn {
+            padding: 16px 24px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            text-decoration: none;
+            display: block;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            box-shadow: 0 10px 20px rgba(238, 90, 36, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(238, 90, 36, 0.4);
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            color: rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 14px;
+            padding: 12px;
+        }
+        
+        .footer {
+            margin-top: 24px;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 12px;
+        }
+        
+        .footer a {
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        #thankYouMessage {
+            text-align: center;
+            color: #4ecb71;
+            font-size: 18px;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <h1>WAF<span>RIK</span></h1>
+        </div>
+        
+        <div class="icon">🔒</div>
+        
+        <div id="consentScreen">
+            <h2>Votre confidentialité</h2>
+            <p>Nous respectons votre vie privée</p>
+            
+            <div class="info-box">
+                <p>📱 Pour vous offrir une expérience gratuite, nous affichons des publicités.</p>
+                <p>🎯 Avec votre accord, nous pouvons personnaliser les annonces selon vos centres d'intérêt.</p>
+                <p>🛡️ Sans personnalisation, vous verrez toujours des pubs, mais moins pertinentes.</p>
+                <p>✅ Vous pouvez changer d'avis à tout moment dans les paramètres.</p>
+            </div>
+            
+            <div class="buttons">
+                <button class="btn btn-primary" onclick="makeChoice('accept')">
+                    ✓ Accepter les pubs personnalisées
+                </button>
+                <button class="btn btn-secondary" onclick="makeChoice('reject')">
+                    Refuser la personnalisation
+                </button>
+                <button class="btn btn-outline" onclick="makeChoice('reject')">
+                    Continuer sans accepter
+                </button>
+            </div>
+        </div>
+        
+        <div id="thankYouScreen" class="hidden">
+            <div id="thankYouMessage"></div>
+        </div>
+        
+        <div class="footer">
+            <a href="#" onclick="showPrivacyPolicy()">Politique de confidentialité</a> • 
+            <a href="#" onclick="showTerms()">Conditions d'utilisation</a>
+        </div>
+    </div>
+    
+    <script>
+        // Fonction appelée quand l'utilisateur fait son choix
+        function makeChoice(choice) {
+            // Construire l'URL de retour avec le choix
+            var redirectUrl = 'wafrik://consent?choice=' + choice;
+            
+            // Afficher le message de remerciement
+            document.getElementById('consentScreen').classList.add('hidden');
+            document.getElementById('thankYouScreen').classList.remove('hidden');
+            
+            var message = (choice === 'accept') 
+                ? '✅ Merci ! Vos pubs seront personnalisées.' 
+                : '✅ Compris. Vos pubs ne seront pas personnalisées.';
+            
+            document.getElementById('thankYouMessage').innerHTML = message + '<br><br>Retour au jeu...';
+            
+            // Tenter d'ouvrir l'URL de deep link pour revenir au jeu
+            setTimeout(function() {
+                window.location.href = redirectUrl;
+            }, 1000);
+            
+            // Fallback : fermer la page après 3 secondes
+            setTimeout(function() {
+                // Si le deep link n'a pas fonctionné, on affiche un message
+                document.getElementById('thankYouMessage').innerHTML = message + '<br><br>Vous pouvez fermer cette page et retourner au jeu.';
+            }, 3000);
+        }
+        
+        function showPrivacyPolicy() {
+            alert('Politique de confidentialité disponible sur notre site web.');
+        }
+        
+        function showTerms() {
+            alert('Conditions d\'utilisation disponibles sur notre site web.');
+        }
+        
+        // Empêcher le retour en arrière
+        history.pushState(null, null, location.href);
+        window.onpopstate = function () {
+            history.go(1);
+        };
+    </script>
+</body>
+</html>
