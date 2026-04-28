@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz - Places</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            position: relative;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2em;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="number"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .timer {
+            text-align: center;
+            font-size: 48px;
+            font-weight: bold;
+            color: #667eea;
+            margin: 20px 0;
+        }
+
+        .timer.warning {
+            color: #ff6b6b;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .question-text {
+            font-size: 24px;
+            text-align: center;
+            margin: 20px 0;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .progress {
+            text-align: center;
+            color: #666;
+            margin: 10px 0;
+        }
+
+        .error {
+            background: #ff6b6b;
+            color: white;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .success {
+            background: #51cf66;
+            color: white;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .results {
+            margin-top: 20px;
+        }
+
+        .medal {
+            font-size: 24px;
+            margin: 10px 0;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .gold {
+            background: linear-gradient(135deg, #ffd700, #ffed4a);
+        }
+
+        .silver {
+            background: linear-gradient(135deg, #c0c0c0, #e8e8e8);
+        }
+
+        .bronze {
+            background: linear-gradient(135deg, #cd7f32, #daa520);
+        }
+
+        .admin-panel {
+            margin-top: 20px;
+        }
+
+        .question-list {
+            list-style: none;
+        }
+
+        .question-item {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn-small {
+            width: auto;
+            padding: 8px 15px;
+            font-size: 14px;
+        }
+
+        .btn-danger {
+            background: #ff6b6b;
+        }
+
+        .btn-success {
+            background: #51cf66;
+        }
+
+        .btn-warning {
+            background: #ffd43b;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Quiz des Places</h1>
+        
+        <!-- Écran de connexion -->
+        <div id="login-screen">
+            <div class="input-group">
+                <label for="pseudo">Entrez votre pseudo :</label>
+                <input type="text" id="pseudo" placeholder="Votre pseudo de jeu..." maxlength="30">
+            </div>
+            <div class="input-group hidden" id="password-group">
+                <label for="password">Mot de passe admin :</label>
+                <input type="password" id="password" placeholder="Mot de passe...">
+            </div>
+            <button onclick="checkPseudo()">Commencer</button>
+            <div id="login-error" class="error hidden"></div>
+        </div>
+
+        <!-- Écran du quiz -->
+        <div id="quiz-screen" class="hidden">
+            <div class="progress" id="progress"></div>
+            <div class="question-text" id="question-text"></div>
+            <div class="timer" id="timer">30</div>
+            <input type="number" id="answer" min="1" max="99" placeholder="Votre réponse (1-99)...">
+            <button onclick="submitAnswer()">Valider</button>
+            <div id="quiz-error" class="error hidden"></div>
+        </div>
+
+        <!-- Écran de résultats utilisateur -->
+        <div id="result-screen" class="hidden">
+            <h2 id="result-message"></h2>
+            <button onclick="location.reload()">Recommencer</button>
+        </div>
+
+        <!-- Écran admin -->
+        <div id="admin-screen" class="hidden">
+            <h2>👑 Panneau Admin</h2>
+            
+            <div style="margin: 20px 0;">
+                <button class="btn-small" onclick="showSection('results')">📊 Résultats</button>
+                <button class="btn-small" onclick="showSection('questions')">📝 Gérer Questions</button>
+                <button class="btn-small btn-warning" onclick="resetQuiz()">🔄 Reset Quiz</button>
+                <button class="btn-small btn-danger" onclick="logout()">🚪 Déconnexion</button>
+            </div>
+
+            <!-- Section Résultats -->
+            <div id="admin-results" class="hidden">
+                <h3>🏆 Podium</h3>
+                <div id="podium"></div>
+                <h3>📋 Autres participants</h3>
+                <div id="others-list"></div>
+            </div>
+
+            <!-- Section Gestion des questions -->
+            <div id="admin-questions" class="hidden">
+                <h3>Ajouter une question</h3>
+                <input type="text" id="new-question-text" placeholder="Texte de la question">
+                <input type="number" id="new-question-answer" placeholder="Réponse correcte (1-99)">
+                <input type="number" id="new-question-time" placeholder="Temps (secondes)" value="30">
+                <button onclick="addQuestion()">➕ Ajouter</button>
+                
+                <h3>Questions existantes</h3>
+                <ul class="question-list" id="question-list"></ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration - CHANGEZ CECI selon votre serveur
+        const API_URL = 'http://VOTRE_IP_LOCALE:8081';
+        
+        let currentUser = null;
+        let isAdmin = false;
+        let questions = [];
+        let currentQuestionIndex = 0;
+        let userAnswers = [];
+        let timerInterval = null;
+        let timeLeft = 30;
+
+        // Vérifier le pseudo
+        async function checkPseudo() {
+            const pseudo = document.getElementById('pseudo').value.trim();
+            const errorDiv = document.getElementById('login-error');
+            
+            if (!pseudo) {
+                showError(errorDiv, 'Veuillez entrer un pseudo');
+                return;
+            }
+
+            // Vérifier si c'est l'admin
+            if (pseudo.toLowerCase() === 'admin') {
+                document.getElementById('password-group').classList.remove('hidden');
+                return;
+            }
+
+            // Vérifier si le pseudo existe déjà
+            try {
+                const response = await fetch(`${API_URL}/check-pseudo/${pseudo}`);
+                const data = await response.json();
+                
+                if (data.exists) {
+                    showError(errorDiv, 'Ce pseudo a déjà participé au quiz !');
+                    return;
+                }
+                
+                // Commencer le quiz
+                currentUser = pseudo;
+                await startQuiz();
+            } catch (error) {
+                showError(errorDiv, 'Erreur de connexion au serveur');
+            }
+        }
+
+        // Login admin
+        async function loginAdmin() {
+            const pseudo = document.getElementById('pseudo').value.trim();
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('login-error');
+
+            try {
+                const response = await fetch(`${API_URL}/admin/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: pseudo, password: password })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    isAdmin = true;
+                    currentUser = 'Admin';
+                    showAdminPanel();
+                } else {
+                    showError(errorDiv, 'Mot de passe incorrect');
+                }
+            } catch (error) {
+                showError(errorDiv, 'Erreur de connexion au serveur');
+            }
+        }
+
+        // Modifier l'écouteur du bouton de connexion
+        document.querySelector('#login-screen button').addEventListener('click', function() {
+            const pseudo = document.getElementById('pseudo').value.trim();
+            if (pseudo.toLowerCase() === 'admin' && document.getElementById('password-group').classList.contains('hidden')) {
+                checkPseudo();
+            } else if (document.getElementById('password-group').classList.contains('hidden') === false) {
+                loginAdmin();
+            } else {
+                checkPseudo();
+            }
+        });
+
+        // Aussi permettre la connexion avec Entrée
+        document.getElementById('password').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') loginAdmin();
+        });
+
+        document.getElementById('pseudo').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') checkPseudo();
+        });
+
+        // Démarrer le quiz
+        async function startQuiz() {
+            try {
+                const response = await fetch(`${API_URL}/questions`);
+                questions = await response.json();
+                
+                if (questions.length === 0) {
+                    showError(document.getElementById('login-error'), 'Aucune question disponible');
+                    return;
+                }
+                
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('quiz-screen').classList.remove('hidden');
+                
+                currentQuestionIndex = 0;
+                userAnswers = [];
+                showQuestion();
+            } catch (error) {
+                showError(document.getElementById('login-error'), 'Erreur de chargement des questions');
+            }
+        }
+
+        // Afficher une question
+        function showQuestion() {
+            if (currentQuestionIndex >= questions.length) {
+                submitAllAnswers();
+                return;
+            }
+
+            const question = questions[currentQuestionIndex];
+            document.getElementById('question-text').textContent = question.text;
+            document.getElementById('progress').textContent = 
+                `Question ${currentQuestionIndex + 1}/${questions.length}`;
+            document.getElementById('answer').value = '';
+            document.getElementById('answer').focus();
+
+            // Réinitialiser le timer
+            timeLeft = question.timeLimit || 30;
+            document.getElementById('timer').textContent = timeLeft;
+            document.getElementById('timer').classList.remove('warning');
+            
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timer').textContent = timeLeft;
+                
+                if (timeLeft <= 10) {
+                    document.getElementById('timer').classList.add('warning');
+                }
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    handleTimeUp();
+                }
+            }, 1000);
+        }
+
+        // Gérer le temps écoulé
+        function handleTimeUp() {
+            userAnswers.push({
+                questionId: questions[currentQuestionIndex].id,
+                value: null,
+                timedOut: true
+            });
+            currentQuestionIndex++;
+            showQuestion();
+        }
+
+        // Soumettre une réponse
+        function submitAnswer() {
+            const answerValue = parseInt(document.getElementById('answer').value);
+            
+            if (isNaN(answerValue) || answerValue < 1 || answerValue > 99) {
+                showError(document.getElementById('quiz-error'), 'Veuillez entrer un nombre entre 1 et 99');
+                return;
+            }
+            
+            clearInterval(timerInterval);
+            
+            userAnswers.push({
+                questionId: questions[currentQuestionIndex].id,
+                value: answerValue,
+                timedOut: false
+            });
+            
+            currentQuestionIndex++;
+            document.getElementById('quiz-error').classList.add('hidden');
+            showQuestion();
+        }
+
+        // Ajouter l'écouteur pour la touche Entrée sur la réponse
+        document.getElementById('answer').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') submitAnswer();
+        });
+
+        // Soumettre toutes les réponses
+        async function submitAllAnswers() {
+            document.getElementById('quiz-screen').classList.add('hidden');
+            
+            try {
+                const response = await fetch(`${API_URL}/submit-quiz`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        pseudo: currentUser,
+                        answers: userAnswers
+                    })
+                });
+
+                const data = await response.json();
+                
+                document.getElementById('result-screen').classList.remove('hidden');
+                
+                if (data.success) {
+                    document.getElementById('result-message').innerHTML = `
+                        ✅ Quiz terminé !<br>
+                        Score : ${data.correctCount}/${data.totalQuestions} (${data.score}%)
+                    `;
+                } else {
+                    document.getElementById('result-message').textContent = data.message;
+                }
+            } catch (error) {
+                document.getElementById('result-screen').classList.remove('hidden');
+                document.getElementById('result-message').textContent = 'Erreur lors de la soumission';
+            }
+        }
+
+        // Afficher le panneau admin
+        function showAdminPanel() {
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('admin-screen').classList.remove('hidden');
+            showSection('results');
+        }
+
+        // Changer de section admin
+        function showSection(section) {
+            document.getElementById('admin-results').classList.add('hidden');
+            document.getElementById('admin-questions').classList.add('hidden');
+            
+            if (section === 'results') {
+                document.getElementById('admin-results').classList.remove('hidden');
+                loadResults();
+            } else if (section === 'questions') {
+                document.getElementById('admin-questions').classList.remove('hidden');
+                loadQuestions();
+            }
+        }
+
+        // Charger les résultats
+        async function loadResults() {
+            try {
+                const response = await fetch(`${API_URL}/admin/results`);
+                const data = await response.json();
+                
+                // Podium
+                let podiumHTML = '';
+                if (data.top3 && data.top3.length > 0) {
+                    data.top3.forEach(participant => {
+                        podiumHTML += `
+                            <div class="medal ${participant.rank === 1 ? 'gold' : participant.rank === 2 ? 'silver' : 'bronze'}">
+                                ${participant.medal} ${participant.pseudo} - 
+                                ${participant.correctCount}/${participant.totalQuestions} 
+                                (${participant.score}%) - ${participant.completedAt}
+                            </div>
+                        `;
+                    });
+                } else {
+                    podiumHTML = '<p>Aucun participant pour le moment</p>';
+                }
+                document.getElementById('podium').innerHTML = podiumHTML;
+                
+                // Autres participants
+                let othersHTML = '';
+                if (data.others && data.others.length > 0) {
+                    data.others.forEach((participant, index) => {
+                        othersHTML += `
+                            <div class="question-item">
+                                <div>
+                                    <strong>#${index + 4}</strong> ${participant.pseudo}
+                                </div>
+                                <div>
+                                    ${participant.correctCount}/${participant.totalQuestions} 
+                                    (${participant.score}%) - ${participant.completedAt}
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+                document.getElementById('others-list').innerHTML = othersHTML || '<p>Aucun autre participant</p>';
+            } catch (error) {
+                console.error('Erreur chargement résultats:', error);
+            }
+        }
+
+        // Charger les questions pour l'admin
+        async function loadQuestions() {
+            try {
+                const response = await fetch(`${API_URL}/admin/questions`);
+                const data = await response.json();
+                
+                let html = '';
+                data.questions.forEach(question => {
+                    html += `
+                        <div class="question-item">
+                            <div>
+                                <strong>Q${question.order}:</strong> ${question.text}<br>
+                                <small>Réponse: ${question.correctAnswer} | Temps: ${question.timeLimit}s</small>
+                            </div>
+                            <button class="btn-small btn-danger" onclick="deleteQuestion(${question.id})">🗑️</button>
+                        </div>
+                    `;
+                });
+                
+                document.getElementById('question-list').innerHTML = html || '<p>Aucune question</p>';
+            } catch (error) {
+                console.error('Erreur chargement questions:', error);
+            }
+        }
+
+        // Ajouter une question
+        async function addQuestion() {
+            const text = document.getElementById('new-question-text').value.trim();
+            const answer = document.getElementById('new-question-answer').value;
+            const time = document.getElementById('new-question-time').value;
+
+            if (!text || !answer || answer < 1 || answer > 99) {
+                alert('Veuillez remplir tous les champs correctement');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/admin/questions`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        text: text,
+                        correctAnswer: parseInt(answer),
+                        timeLimit: parseInt(time) || 30
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    document.getElementById('new-question-text').value = '';
+                    document.getElementById('new-question-answer').value = '';
+                    document.getElementById('new-question-time').value = '30';
+                    loadQuestions();
+                    alert('Question ajoutée avec succès !');
+                }
+            } catch (error) {
+                alert('Erreur lors de l\'ajout de la question');
+            }
+        }
+
+        // Supprimer une question
+        async function deleteQuestion(id) {
+            if (!confirm('Voulez-vous vraiment supprimer cette question ?')) return;
+            
+            try {
+                const response = await fetch(`${API_URL}/admin/questions/${id}`, {
+                    method: 'DELETE'
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    loadQuestions();
+                    alert('Question supprimée');
+                }
+            } catch (error) {
+                alert('Erreur lors de la suppression');
+            }
+        }
+
+        // Réinitialiser le quiz
+        async function resetQuiz() {
+            if (!confirm('ATTENTION : Cela supprimera tous les participants. Continuer ?')) return;
+            
+            try {
+                const response = await fetch(`${API_URL}/admin/reset`, {
+                    method: 'POST'
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('Quiz réinitialisé avec succès !');
+                    loadResults();
+                }
+            } catch (error) {
+                alert('Erreur lors de la réinitialisation');
+            }
+        }
+
+        // Déconnexion
+        function logout() {
+            isAdmin = false;
+            currentUser = null;
+            document.getElementById('admin-screen').classList.add('hidden');
+            document.getElementById('login-screen').classList.remove('hidden');
+            document.getElementById('password-group').classList.add('hidden');
+            document.getElementById('password').value = '';
+            document.getElementById('pseudo').value = '';
+        }
+
+        // Afficher une erreur
+        function showError(element, message) {
+            element.textContent = message;
+            element.classList.remove('hidden');
+            setTimeout(() => element.classList.add('hidden'), 3000);
+        }
+    </script>
+</body>
+</html>
