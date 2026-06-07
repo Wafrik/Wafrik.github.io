@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz des Places - Communauté</title>
+    <title>Statistiques GODÉ - Arena</title>
     <style>
         * {
             margin: 0;
@@ -13,7 +13,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #0f0c29 0%, #1a1a3e 30%, #24243e 60%, #0a0a1a 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -22,92 +22,184 @@
         }
 
         .container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            background: rgba(13, 20, 36, 0.95);
+            border: 2px solid #2a4070;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 40px rgba(79,140,255,0.15);
             padding: 40px;
-            max-width: 600px;
+            max-width: 650px;
             width: 100%;
             text-align: center;
+            backdrop-filter: blur(10px);
         }
 
-        h1 {
-            color: #333;
-            font-size: 2.5em;
-            margin-bottom: 20px;
+        .logo {
+            font-size: 3.5rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            background: linear-gradient(135deg, #ffffff 0%, #8ab4f8 40%, #4f8cff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            color: #7b8aa8;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 25px;
         }
 
         .emoji {
-            font-size: 60px;
-            margin: 20px 0;
+            font-size: 70px;
+            margin: 15px 0;
+            filter: drop-shadow(0 0 20px rgba(79,140,255,0.3));
         }
 
         .description {
-            color: #666;
-            font-size: 18px;
-            line-height: 1.6;
-            margin: 30px 0;
+            color: #c8d6e5;
+            font-size: 16px;
+            line-height: 1.8;
+            margin: 25px 0;
             text-align: left;
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 10px;
+            background: rgba(10, 15, 28, 0.8);
+            padding: 25px;
+            border-radius: 16px;
+            border: 1px solid #1e2a3a;
         }
 
         .description strong {
-            color: #667eea;
+            color: #4f8cff;
         }
 
-        .participate-btn {
+        .description .highlight {
             display: inline-block;
-            padding: 18px 40px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: rgba(79,140,255,0.15);
+            padding: 2px 10px;
+            border-radius: 20px;
+            color: #8ab4f8;
+            font-weight: 600;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .feature-item {
+            background: rgba(15, 19, 34, 0.9);
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid #1e2a3a;
+            text-align: center;
+        }
+
+        .feature-item .icon {
+            font-size: 28px;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .feature-item .label {
+            color: #8899b4;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .go-btn {
+            display: inline-block;
+            padding: 18px 50px;
+            background: linear-gradient(135deg, #4f8cff 0%, #3d6ce4 100%);
             color: white;
-            font-size: 20px;
-            font-weight: bold;
+            font-size: 22px;
+            font-weight: 700;
             text-decoration: none;
             border-radius: 50px;
-            margin: 20px 0;
-            transition: transform 0.3s, box-shadow 0.3s;
+            margin: 20px 0 10px;
+            transition: all 0.3s ease;
             border: none;
             cursor: pointer;
+            box-shadow: 0 8px 30px rgba(79,140,255,0.3);
+            letter-spacing: 1px;
+            text-transform: uppercase;
         }
 
-        .participate-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.4);
+        .go-btn:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 40px rgba(79,140,255,0.5);
+            background: linear-gradient(135deg, #5d99ff 0%, #4f7df0 100%);
         }
 
         .info {
-            color: #999;
-            font-size: 14px;
-            margin-top: 20px;
+            color: #5a6d8a;
+            font-size: 13px;
+            margin-top: 15px;
+        }
+
+        .divider {
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #4f8cff, transparent);
+            margin: 15px auto;
+            border-radius: 10px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="emoji">🎯</div>
-        <h1>Quiz des Places</h1>
+        <div class="logo">⚔️ GODÉ</div>
+        <div class="subtitle">Arena • Statistiques</div>
+        <div class="divider"></div>
+        <div class="emoji">📊</div>
         
         <div class="description">
-            <strong>🎮 Comment ça marche ?</strong><br><br>
-            Devinez le nombre de places disponibles pour chaque couleur dans le classement du jeu !<br><br>
-            <strong>🟢 Places Vert</strong> - Combien de places ?<br>
-            <strong>🔵 Places Bleu</strong> - Combien de places ?<br>
-            <strong>🩷 Places Rose</strong> - Combien de places ?<br>
-            <strong>🟡 Places Jaune</strong> - Combien de places ?<br><br>
-            📝 Entrez un nombre entre 1 et 99 pour chaque question<br>
-            ⏱️ 30 secondes par question<br>
-            🏆 Les 3 meilleurs seront récompensés (Or, Argent, Bronze)<br><br>
-            <strong>⚠️ Attention :</strong> Un seul essai par pseudo !
+            <strong>🔍 Comment ça fonctionne ?</strong><br><br>
+            
+            <span class="highlight">1️⃣ Recherche</span> un joueur dans la barre de recherche<br>
+            <span class="highlight">2️⃣ Consulte</span> ses statistiques détaillées<br>
+            <span class="highlight">3️⃣ Analyse</span> ses performances par adversaire<br><br>
+            
+            <strong>📋 Ce que tu peux voir :</strong><br><br>
+            🏆 Nombre total de <strong>victoires</strong><br>
+            💔 Nombre total de <strong>défaites</strong><br>
+            🤝 Nombre total de <strong>matchs nuls</strong><br>
+            ⚔️ L'adversaire le <strong>plus affronté</strong><br>
+            ✅ L'adversaire contre qui il a <strong>le plus gagné</strong><br>
+            🛡️ Les adversaires contre qui il n'a <strong>jamais perdu</strong><br><br>
+            
+            📅 Possibilité de <strong>filtrer par date</strong><br>
+            👆 <strong>Clique</strong> sur un adversaire pour voir le détail de chaque match !
         </div>
 
-        <a href="http://92.133.24.95:8081/" class="participate-btn">
-            🎯 PARTICIPER AU QUIZ
+        <div class="features">
+            <div class="feature-item">
+                <span class="icon">🔍</span>
+                <span class="label">Recherche rapide</span>
+            </div>
+            <div class="feature-item">
+                <span class="icon">📊</span>
+                <span class="label">Stats détaillées</span>
+            </div>
+            <div class="feature-item">
+                <span class="icon">⚔️</span>
+                <span class="label">Face à face</span>
+            </div>
+            <div class="feature-item">
+                <span class="icon">📅</span>
+                <span class="label">Filtre par date</span>
+            </div>
+        </div>
+
+        <a href="http://92.133.24.95:8081/" class="go-btn">
+            🚀 GO !
         </a>
 
         <div class="info">
-            Rejoignez notre communauté pour connaître les gagnants !
+            🔗 Accède aux statistiques complètes de l'arène GODÉ
         </div>
     </div>
 </body>
