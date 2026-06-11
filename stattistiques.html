@@ -51,6 +51,8 @@
             transition: all 0.3s;
             box-shadow: 0 10px 35px rgba(79,140,255,0.4);
             letter-spacing: 2px;
+            cursor: pointer;
+            border: none;
         }
 
         .go-btn:hover {
@@ -64,23 +66,21 @@
         <div class="logo">⚔️ GODÉ Statistiques</div>
         <div class="subtitle">Consultez les dernières statistiques mises à jour par le jeu</div>
         
-        <a href="http://92.133.24.95:8081/" class="go-btn">🚀 GO !</a>
+        <button class="go-btn" onclick="goToStats()">🚀 GO !</button>
     </div>
 
     <script>
-        // ========== UNE SEULE PAGE À LA FOIS ==========
+        // ========== UNE SEULE PAGE DE STATS À LA FOIS ==========
         (function() {
             const CHANNEL_NAME = 'gode_stats_landing';
             const bc = new BroadcastChannel(CHANNEL_NAME);
             const pageId = Date.now() + '_' + Math.random().toString(36).substr(2, 9);
             
-            // Se présenter
             bc.postMessage({ type: 'hello', id: pageId });
             
             bc.onmessage = (event) => {
-                // Une autre page existe déjà → se fermer
                 if (event.data.type === 'hello' && event.data.id !== pageId) {
-                    console.log('🔄 Page déjà ouverte, fermeture...');
+                    console.log('🔄 Page stats déjà ouverte, fermeture...');
                     window.close();
                     setTimeout(() => {
                         document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;color:#fff;font-family:sans-serif;font-size:1.5rem;text-align:center;background:#0a0e17;">Cette page est déjà ouverte.<br>Vous pouvez fermer cet onglet.</div>';
@@ -88,9 +88,13 @@
                 }
             };
             
-            // Nettoyer
             window.addEventListener('beforeunload', () => bc.close());
         })();
+
+        function goToStats() {
+            // Ouvrir la page d'analyse (qui a déjà sa propre sécurité anti-doublon)
+            window.open('http://92.133.24.95:8081/', '_blank');
+        }
     </script>
 </body>
 </html>
