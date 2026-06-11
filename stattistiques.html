@@ -6,7 +6,6 @@
     <title>Statistiques GODÉ</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #0a0e17;
@@ -16,85 +15,32 @@
             align-items: center;
             padding: 20px;
         }
-
-        .container {
-            text-align: center;
-            max-width: 400px;
-            width: 100%;
-        }
-
+        .container { text-align: center; max-width: 400px; width: 100%; }
         .logo {
-            font-size: 2.8rem;
-            font-weight: 800;
+            font-size: 2.8rem; font-weight: 800;
             background: linear-gradient(135deg, #fff, #4f8cff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
             margin-bottom: 10px;
         }
-
-        .subtitle {
-            color: #7b8aa8;
-            font-size: 15px;
-            margin-bottom: 40px;
-        }
-
+        .subtitle { color: #7b8aa8; font-size: 15px; margin-bottom: 40px; }
         .go-btn {
-            display: inline-block;
-            padding: 22px 70px;
-            background: #4f8cff;
-            color: white;
-            font-size: 28px;
-            font-weight: 800;
-            text-decoration: none;
-            border-radius: 60px;
-            transition: all 0.3s;
-            box-shadow: 0 10px 35px rgba(79,140,255,0.4);
-            letter-spacing: 2px;
-            cursor: pointer;
-            border: none;
+            display: inline-block; padding: 22px 70px; background: #4f8cff; color: white;
+            font-size: 28px; font-weight: 800; text-decoration: none; border-radius: 60px;
+            transition: all 0.3s; box-shadow: 0 10px 35px rgba(79,140,255,0.4); letter-spacing: 2px;
+            cursor: pointer; border: none;
         }
-
-        .go-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 15px 45px rgba(79,140,255,0.6);
-        }
+        .go-btn:hover { transform: scale(1.05); box-shadow: 0 15px 45px rgba(79,140,255,0.6); }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="logo">⚔️ GODÉ Statistiques</div>
-        <div class="subtitle">Consultez les dernières statistiques mises à jour par le jeu</div>
-        
-        <button class="go-btn" onclick="goToStats()">🚀 GO !</button>
+        <div class="subtitle">Redirection vers les statistiques...</div>
     </div>
 
     <script>
-        // ========== UNE SEULE PAGE DE STATS À LA FOIS ==========
-        (function() {
-            const CHANNEL_NAME = 'gode_stats_landing';
-            const bc = new BroadcastChannel(CHANNEL_NAME);
-            const pageId = Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-            
-            bc.postMessage({ type: 'hello', id: pageId });
-            
-            bc.onmessage = (event) => {
-                if (event.data.type === 'hello' && event.data.id !== pageId) {
-                    console.log('🔄 Page stats déjà ouverte, fermeture...');
-                    window.close();
-                    setTimeout(() => {
-                        document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;color:#fff;font-family:sans-serif;font-size:1.5rem;text-align:center;background:#0a0e17;">Cette page est déjà ouverte.<br>Vous pouvez fermer cet onglet.</div>';
-                    }, 500);
-                }
-            };
-            
-            window.addEventListener('beforeunload', () => bc.close());
-        })();
-
-        function goToStats() {
-            // Ouvrir la page d'analyse (qui a déjà sa propre sécurité anti-doublon)
-            window.open('http://92.133.24.95:8081/', '_blank');
-        }
+        // Redirection immédiate vers la page d'analyse
+        window.location.replace('http://92.133.24.95:8081/');
     </script>
 </body>
 </html>
