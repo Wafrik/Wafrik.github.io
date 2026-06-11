@@ -51,6 +51,8 @@
             transition: all 0.3s;
             box-shadow: 0 10px 35px rgba(79,140,255,0.4);
             letter-spacing: 2px;
+            cursor: pointer;
+            border: none;
         }
 
         .go-btn:hover {
@@ -64,7 +66,47 @@
         <div class="logo">⚔️ GODÉ Statistiques</div>
         <div class="subtitle">Consultez les dernières statistiques mises à jour par le jeu</div>
         
-        <a href="http://92.133.24.95:8081/" class="go-btn">🚀 GO !</a>
+        <button class="go-btn" onclick="openStats()">🚀 GO !</button>
     </div>
+
+    <script>
+        // ========== REMPLACER L'ANCIENNE PAGE ==========
+        (function() {
+            const CHANNEL_NAME = 'gode_stats_singleton';
+            const bc = new BroadcastChannel(CHANNEL_NAME);
+            const pageId = Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            
+            bc.postMessage({ type: 'new_page', id: pageId });
+            
+            bc.onmessage = (event) => {
+                if (event.data.type === 'new_page' && event.data.id !== pageId) {
+                    console.log('🔄 Nouvelle instance détectée, fermeture de cette page...');
+                    window.close();
+                    setTimeout(() => {
+                        document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;color:#fff;font-family:sans-serif;font-size:1.5rem;text-align:center;background:#0a0e17;">Cette page a été remplacée.<br>Vous pouvez fermer cet onglet.</div>';
+                    }, 500);
+                }
+                if (event.data.type === 'ping') {
+                    bc.postMessage({ type: 'pong', id: pageId });
+                }
+            };
+            
+            setInterval(() => {
+                bc.postMessage({ type: 'ping', id: pageId });
+            }, 3000);
+            
+            window.addEventListener('beforeunload', () => {
+                bc.postMessage({ type: 'closed', id: pageId });
+                bc.close();
+            });
+            
+            console.log('📄 Page stats unique activée | ID:', pageId);
+        })();
+
+        function openStats() {
+            // Ouvrir dans le même onglet (remplace cette page)
+            window.location.href = 'http://92.133.24.95:8081/';
+        }
+    </script>
 </body>
 </html>
