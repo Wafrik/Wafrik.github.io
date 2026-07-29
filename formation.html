@@ -3,230 +3,386 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formation Excel VBA & Macro - Plateforme Interactive</title>
+    <title>Plateforme d'Apprentissage - Bureautique & VBA</title>
     <style>
         :root {
-            --bg: #f8fafc;
-            --card-bg: #ffffff;
-            --primary: #2563eb;
-            --primary-hover: #1d4ed8;
-            --text: #1e293b;
-            --text-secondary: #64748b;
-            --border: #e2e8f0;
-            --success: #10b981;
-            --error: #ef4444;
-            --shadow: 0 1px 3px rgba(0,0,0,0.1);
-            --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
-            --radius: 12px;
+            --blue-light: #e0f2fe;
+            --blue-mid: #38bdf8;
+            --blue-pure: #0ea5e9;
+            --blue-deep: #0284c7;
+            --blue-ultra: #0369a1;
+            --text: #0f172a;
+            --text-secondary: #475569;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --radius: 16px;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background: var(--bg);
+            background: #ffffff;
             color: var(--text);
             min-height: 100vh;
-            padding: 40px 20px;
         }
 
-        .container {
-            width: 100%;
-            max-width: 900px;
-            margin: 0 auto;
+        /* --- HEADER & DEGRADÉ BLEU --- */
+        .navbar {
+            background: linear-gradient(135deg, #ffffff 0%, #e0f2fe 30%, #bae6fd 60%, #38bdf8 100%);
+            padding: 20px 30px;
+            box-shadow: 0 2px 10px rgba(14, 165, 233, 0.15);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            border-bottom: 2px solid rgba(255,255,255,0.5);
         }
 
-        /* --- PARTIE RESSOURCES EXISTANTES --- */
-        .header { text-align: center; margin-bottom: 40px; }
-        .header h1 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
-        .header p { color: var(--text-secondary); font-size: 16px; }
-
-        .cards-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 60px;
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .logo span { font-size: 28px; }
+        .logo h1 {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--blue-ultra);
+            text-shadow: 0 1px 2px rgba(255,255,255,0.8);
         }
 
-        @media (max-width: 600px) { .cards-grid { grid-template-columns: 1fr; } }
+        .menu {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
 
-        .card {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 32px 28px;
-            text-align: center;
+        .menu-btn {
+            padding: 8px 18px;
+            border-radius: 30px;
+            border: none;
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--blue-ultra);
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(4px);
+            cursor: pointer;
+            transition: all 0.25s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            text-decoration: none;
+        }
+
+        .menu-btn:hover {
+            background: #ffffff;
+            transform: translateY(-2px);
             box-shadow: var(--shadow);
-            transition: all 0.2s ease;
-            cursor: default;
         }
 
-        .card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
-        .card-icon { font-size: 40px; display: block; margin-bottom: 16px; }
-        .card h2 { font-size: 20px; font-weight: 600; margin-bottom: 8px; }
-        .card .subtitle { font-size: 14px; color: var(--text-secondary); margin-bottom: 24px; }
-
-        .btn {
-            display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px;
-            border-radius: 8px; font-size: 14px; font-weight: 600; text-decoration: none;
-            cursor: pointer; border: none; transition: all 0.2s ease; margin: 4px;
+        .menu-btn.active {
+            background: var(--blue-pure);
+            color: white;
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.4);
         }
-        .btn-primary { background: var(--primary); color: white; }
-        .btn-primary:hover { background: var(--primary-hover); }
-        .btn-outline { background: white; color: var(--primary); border: 2px solid var(--primary); }
-        .btn-outline:hover { background: #eff6ff; }
 
-        /* --- NOUVEAU : INTERFACE DE FORMATION INTERACTIVE --- */
+        /* --- CONTENEUR PRINCIPAL --- */
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        /* --- MODULE DE FORMATION VBA --- */
         .training-section {
             background: var(--card-bg);
-            border: 2px solid var(--border);
+            border: 1px solid rgba(255,255,255,0.5);
             border-radius: var(--radius);
-            padding: 30px;
+            padding: 35px;
             box-shadow: var(--shadow-lg);
-            margin-top: 20px;
+            backdrop-filter: blur(8px);
+            animation: fadeSlideUp 0.5s ease;
         }
 
         .mission-header {
             display: flex;
             align-items: center;
             gap: 15px;
-            margin-bottom: 20px;
-            border-bottom: 1px solid var(--border);
+            margin-bottom: 25px;
+            border-bottom: 2px solid #f1f5f9;
             padding-bottom: 15px;
         }
 
         .mission-badge {
-            background: var(--primary);
+            background: linear-gradient(135deg, var(--blue-mid), var(--blue-ultra));
             color: white;
-            padding: 6px 14px;
+            padding: 6px 16px;
             border-radius: 20px;
-            font-size: 12px;
+            font-size: 13px;
             font-weight: 700;
+            letter-spacing: 0.5px;
         }
 
         .mission-lesson {
-            background: #f1f5f9;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            border-left: 4px solid var(--primary);
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            border-left: 6px solid var(--blue-pure);
             font-size: 15px;
-            line-height: 1.6;
+            line-height: 1.7;
+            color: var(--text-secondary);
+        }
+
+        .mission-lesson code {
+            background: #e2e8f0;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 14px;
+            color: var(--blue-ultra);
+            font-weight: 600;
         }
 
         .mission-code-editor {
             width: 100%;
             font-family: 'Consolas', 'Courier New', monospace;
             font-size: 14px;
-            padding: 15px;
-            border: 2px solid var(--border);
-            border-radius: 8px;
+            padding: 18px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
             background: #f8fafc;
-            min-height: 150px;
+            min-height: 160px;
             resize: vertical;
-            margin-bottom: 15px;
-            transition: border-color 0.3s ease;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            color: var(--text);
         }
 
         .mission-code-editor:focus {
             outline: none;
-            border-color: var(--primary);
+            border-color: var(--blue-pure);
             background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.15);
         }
 
+        .actions-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px;
+            border-radius: 30px; font-size: 15px; font-weight: 600; 
+            cursor: pointer; border: none; transition: all 0.25s ease;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--blue-pure), var(--blue-ultra));
+            color: white;
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(14, 165, 233, 0.4);
+        }
+
+        .btn-outline {
+            background: white;
+            color: var(--blue-ultra);
+            border: 2px solid var(--blue-pure);
+        }
+        .btn-outline:hover {
+            background: #f0f9ff;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: #10b981; color: white;
+        }
+        .btn-success:hover { background: #059669; transform: translateY(-2px); }
+
+        /* --- FEEDBACK & TOAST --- */
         .feedback-area {
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 15px;
-            display: none; /* Caché par défaut */
+            padding: 18px 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+            display: none;
+            font-size: 15px;
+            line-height: 1.6;
         }
-        .feedback-area.success { display: block; background: #d1fae5; border: 1px solid var(--success); color: #065f46; }
-        .feedback-area.error { display: block; background: #fee2e2; border: 1px solid var(--error); color: #991b1b; }
+        .feedback-area.success { display: block; background: #d1fae5; border: 1px solid #10b981; color: #065f46; }
+        .feedback-area.error { display: block; background: #fee2e2; border: 1px solid #ef4444; color: #991b1b; }
 
-        .footer { text-align: center; margin-top: 40px; color: var(--text-secondary); font-size: 13px; }
+        /* --- FOOTER --- */
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            color: var(--text-secondary);
+            font-size: 14px;
+            border-top: 1px solid #e2e8f0;
+            opacity: 0.8;
+        }
+
+        /* --- ANIMATIONS --- */
+        @keyframes fadeSlideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 700px) {
+            .navbar { flex-direction: column; gap: 15px; align-items: stretch; text-align: center; }
+            .menu { justify-content: center; }
+            .menu-btn { font-size: 13px; padding: 6px 14px; }
+        }
     </style>
 </head>
 <body>
+
+    <!-- BARRE DE NAVIGATION (Menu complet) -->
+    <nav class="navbar">
+        <div class="logo">
+            <span>📚</span>
+            <h1>EduTech Pro</h1>
+        </div>
+        <div class="menu">
+            <button class="menu-btn" onclick="changeModule('word')">📄 Word</button>
+            <button class="menu-btn active" onclick="changeModule('excel')">📊 Excel</button>
+            <button class="menu-btn" onclick="changeModule('powerpoint')">📽️ PowerPoint</button>
+            <button class="menu-btn" onclick="changeModule('access')">🗄️ Access</button>
+            <button class="menu-btn" onclick="changeModule('outlook')">📧 Outlook</button>
+            <button class="menu-btn" onclick="changeModule('internet')">🌐 Internet</button>
+        </div>
+    </nav>
+
+    <!-- CONTENU PRINCIPAL -->
     <div class="container">
-        <!-- Partie Ressources (Votre design original) -->
-        <div class="header">
-            <span class="icon" style="font-size: 40px;">📊</span>
-            <h1>Tableau de Bord Commercial</h1>
-            <p>Ressources & Exercices TCD</p>
+        <div id="mainContent" class="training-section">
+            <!-- Le contenu est généré dynamiquement par JavaScript -->
         </div>
-
-        <div class="cards-grid">
-            <div class="card">
-                <span class="card-icon">📝</span>
-                <h2>Exercice Word</h2>
-                <p class="subtitle">Consignes de l'exercice</p>
-                <span class="btn btn-primary" onclick="alert('Fonction de téléchargement simulée')">📥 Télécharger</span>
-            </div>
-            <div class="card">
-                <span class="card-icon">📈</span>
-                <h2>Données Excel</h2>
-                <p class="subtitle">100 lignes de données</p>
-                <span class="btn btn-outline" onclick="alert('Fonction de téléchargement simulée')">📥 Télécharger .csv</span>
-            </div>
-        </div>
-
-        <!-- NOUVEAU : MODULE DE FORMATION VBA INTERACTIF -->
-        <div class="training-section" id="trainingArea">
-            <div class="mission-header">
-                <span class="mission-badge">Mission 1 / 10</span>
-                <h2>🏁 Bonjour le monde</h2>
-            </div>
-
-            <div class="mission-lesson">
-                <strong>📖 Le cours :</strong><br>
-                Pour afficher un message à l'utilisateur dans VBA, on utilise <code>MsgBox</code>. 
-                <br>La syntaxe est : <code>MsgBox "Votre texte"</code>.<br><br>
-                <strong>🎯 Objectif :</strong> Écris une macro qui ouvre une fenêtre avec le texte <strong>"J'ai réussi !"</strong>.
-            </div>
-
-            <label for="codeInput" style="font-weight: 600; display: block; margin-bottom: 8px; font-size: 14px;">✍️ À ton tour, écris le script ci-dessous :</label>
-            <textarea id="codeInput" class="mission-code-editor" placeholder="Sub Mission1()&#10;    &#10;End Sub">Sub Mission1()
-    
-End Sub</textarea>
-
-            <div style="display: flex; gap: 10px;">
-                <button class="btn btn-primary" onclick="validateCode()">✅ Valider la mission</button>
-                <button class="btn btn-outline" onclick="resetCode()">🔄 Réinitialiser</button>
-            </div>
-
-            <!-- Zone de feedback -->
-            <div id="feedback" class="feedback-area"></div>
-        </div>
-
+        
         <div class="footer">
-            🚀 Apprends VBA en relevant des défis ! 
+            🚀 Plateforme d'apprentissage interactif • Propulsé par la pratique
         </div>
     </div>
 
     <script>
-        // Le moteur de validation de la Mission 1
-        function validateCode() {
-            const codeInput = document.getElementById('codeInput').value;
+        // --- DONNÉES DES MODULES ---
+        const modules = {
+            excel: {
+                title: "Mission 1 / 10 : Hello World",
+                badge: "💻 Programmation VBA",
+                lesson: `<strong>📖 Le cours :</strong><br>
+                         Pour afficher un message à l'utilisateur dans Excel VBA, on utilise l'instruction <code>MsgBox</code>. 
+                         <br>La syntaxe est : <code>MsgBox "Votre texte"</code>.<br><br>
+                         <strong>🎯 Objectif :</strong> Écris une macro qui ouvre une fenêtre avec le texte <strong>"J'ai réussi !"</strong>.`,
+                codePlaceholder: `Sub Mission1()
+    
+End Sub`,
+                correctRegex: /Sub\s+Mission1\(\)[\s\S]*MsgBox\s*"J'ai réussi !"[\s\S]*End\s+Sub/i
+            },
+            word: {
+                title: "Module Word",
+                badge: "📄 Traitement de texte",
+                lesson: "<strong>Module en construction.</strong><br>Bientôt des exercices sur les styles, la mise en page et le publipostage.",
+                codePlaceholder: "// Pas de code pour ce module pour l'instant",
+                correctRegex: null
+            },
+            powerpoint: {
+                title: "Module PowerPoint",
+                badge: "📽️ Présentations",
+                lesson: "<strong>Module en construction.</strong><br>Bientôt des exercices sur les diapositives maîtres et les animations.",
+                codePlaceholder: "// Module indisponible",
+                correctRegex: null
+            },
+            access: {
+                title: "Module Access",
+                badge: "🗄️ Bases de données",
+                lesson: "<strong>Module en construction.</strong><br>Bientôt des requêtes SQL et des formulaires.",
+                codePlaceholder: "// Module indisponible",
+                correctRegex: null
+            },
+            outlook: {
+                title: "Module Outlook",
+                badge: "📧 Gestion des emails",
+                lesson: "<strong>Module en construction.</strong><br>Bientôt la gestion des règles et du calendrier.",
+                codePlaceholder: "// Module indisponible",
+                correctRegex: null
+            },
+            internet: {
+                title: "Module Internet",
+                badge: "🌐 Navigation & Web",
+                lesson: "<strong>Module en construction.</strong><br>Bientôt des exercices sur la sécurité et les moteurs de recherche.",
+                codePlaceholder: "// Module indisponible",
+                correctRegex: null
+            }
+        };
+
+        // --- FONCTION DE CHANGEMENT DE MODULE ---
+        function changeModule(moduleKey) {
+            // Mise à jour des boutons du menu
+            document.querySelectorAll('.menu-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            const mod = modules[moduleKey];
+            const container = document.getElementById('mainContent');
+
+            // Si le module n'a pas de validation (pas de Regex), on affiche juste une leçon statique
+            if(!mod.correctRegex) {
+                container.innerHTML = `
+                    <div class="mission-header">
+                        <span class="mission-badge">${mod.badge}</span>
+                        <h2>${mod.title}</h2>
+                    </div>
+                    <div class="mission-lesson">${mod.lesson}</div>
+                    <div style="background:#e2e8f0; padding:20px; border-radius:12px; text-align:center; color: var(--text-secondary);">
+                        🛠️ Ce module est en cours de développement. Revenez bientôt !
+                    </div>
+                `;
+                return;
+            }
+
+            // Affichage du module Excel (interactif)
+            container.innerHTML = `
+                <div class="mission-header">
+                    <span class="mission-badge">${mod.badge}</span>
+                    <h2>${mod.title}</h2>
+                </div>
+
+                <div class="mission-lesson">
+                    ${mod.lesson}
+                </div>
+
+                <label for="codeInput" style="font-weight: 600; display: block; margin-bottom: 10px; font-size: 15px; color: var(--blue-ultra);">✍️ À ton tour, écris le script ci-dessous :</label>
+                <textarea id="codeInput" class="mission-code-editor">${mod.codePlaceholder}</textarea>
+
+                <div class="actions-row">
+                    <button class="btn btn-primary" onclick="validateCode('${moduleKey}')">✅ Valider la mission</button>
+                    <button class="btn btn-outline" onclick="resetCode('${moduleKey}')">🔄 Réinitialiser</button>
+                </div>
+
+                <div id="feedback" class="feedback-area"></div>
+            `;
+        }
+
+        // --- MOTEUR DE VALIDATION ---
+        function validateCode(moduleKey) {
+            const mod = modules[moduleKey];
+            const codeInput = document.getElementById('codeInput');
             const feedback = document.getElementById('feedback');
 
-            // 1. On nettoie le code pour enlever les espaces inutiles en début/fin de ligne
-            const lines = codeInput.split('\n').map(line => line.trim());
-            
-            // 2. On reconstruit le code sans les espaces pour analyser
-            const cleanCode = lines.join('');
+            if(!mod.correctRegex) return;
 
-            // 3. La réponse attendue (le strict minimum pour valider)
-            // On permet des espaces entre Sub et Mission1, et entre MsgBox et le texte
-            const expectedSub = /Sub\s+Mission1\(\)/; 
-            const expectedMsg = /MsgBox\s*"J'ai réussi !"/;
-            const expectedEnd = /End\s+Sub/;
+            const userCode = codeInput.value;
 
-            // 4. On vérifie si les éléments essentiels sont présents
-            const hasSub = expectedSub.test(cleanCode);
-            const hasMsg = expectedMsg.test(cleanCode);
-            const hasEnd = expectedEnd.test(cleanCode);
-
-            if (hasSub && hasMsg && hasEnd) {
+            // Vérification avec l'expression régulière
+            if (mod.correctRegex.test(userCode)) {
                 // SUCCÈS
                 feedback.className = 'feedback-area success';
                 feedback.innerHTML = `
@@ -235,13 +391,14 @@ End Sub</textarea>
                     <em>MsgBox</em> sert à créer une fenêtre de dialogue, et tout texte doit être entre guillemets.<br><br>
                     🟢 <strong>Prochaine étape :</strong> La Mission 2 arrive bientôt...
                 `;
-                // Ici, on pourrait débloquer la Mission 2 en JavaScript (changer le contenu HTML de trainingArea)
+                // On pourrait ici désactiver le bouton "Valider" pour signifier que c'est fini.
             } else {
                 // ÉCHEC
                 let hint = "";
-                if(!hasSub) hint = "💡 Indice : Vérifie le nom de ta macro, elle doit s'appeler exactement <code>Sub Mission1()</code>.";
-                else if(!hasMsg) hint = "💡 Indice : Utilise <code>MsgBox</code> et n'oublie pas les guillemets <code>\" \"</code> autour du texte.";
-                else if(!hasEnd) hint = "💡 Indice : Il manque <code>End Sub</code> à la fin de ton script.";
+                if(!/Sub\s+Mission1\(\)/i.test(userCode)) hint = "💡 Indice : Vérifie le nom de ta macro, elle doit s'appeler exactement <code>Sub Mission1()</code>.";
+                else if(!/MsgBox\s*"J'ai réussi !"/i.test(userCode)) hint = "💡 Indice : Utilise <code>MsgBox</code> et n'oublie pas les guillemets <code>\" \"</code> autour du texte.";
+                else if(!/End\s+Sub/i.test(userCode)) hint = "💡 Indice : Il manque <code>End Sub</code> à la fin de ton script.";
+                else hint = "💡 Indice : Vérifie la casse (majuscules/minuscules) et les guillemets.";
 
                 feedback.className = 'feedback-area error';
                 feedback.innerHTML = `
@@ -252,13 +409,18 @@ End Sub</textarea>
             }
         }
 
-        function resetCode() {
-            document.getElementById('codeInput').value = `Sub Mission1()
-    
-End Sub`;
+        // --- RÉINITIALISATION ---
+        function resetCode(moduleKey) {
+            const mod = modules[moduleKey];
+            document.getElementById('codeInput').value = mod.codePlaceholder;
             document.getElementById('feedback').className = 'feedback-area';
             document.getElementById('feedback').innerHTML = '';
         }
+
+        // Chargement initial (Excel au démarrage)
+        document.addEventListener('DOMContentLoaded', function() {
+            changeModule('excel');
+        });
     </script>
 </body>
 </html>
