@@ -3,36 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plateforme d'Apprentissage - Bureautique & VBA</title>
+    <title>🎮 CodeQuest - Apprends le VBA en t'amusant !</title>
     <style>
         :root {
-            --blue-light: #e0f2fe;
-            --blue-mid: #38bdf8;
-            --blue-pure: #0ea5e9;
-            --blue-deep: #0284c7;
-            --blue-ultra: #0369a1;
-            --text: #0f172a;
-            --text-secondary: #475569;
-            --card-bg: rgba(255, 255, 255, 0.95);
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            --radius: 16px;
+            --bg: #f0f4ff;
+            --card: #ffffff;
+            --purple: #7c3aed;
+            --purple-light: #a78bfa;
+            --pink: #ec4899;
+            --pink-light: #f472b6;
+            --yellow: #f59e0b;
+            --yellow-light: #fbbf24;
+            --green: #10b981;
+            --green-light: #34d399;
+            --blue: #3b82f6;
+            --blue-light: #60a5fa;
+            --orange: #f97316;
+            --orange-light: #fb923c;
+            --red: #ef4444;
+            --red-light: #f87171;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
+            --shadow-md: 0 8px 30px rgba(0,0,0,0.12);
+            --shadow-xl: 0 20px 60px rgba(0,0,0,0.15);
+            --radius-xl: 28px;
+            --radius-lg: 20px;
+            --radius-md: 16px;
+            --radius-sm: 12px;
+            --bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background: #ffffff;
+            font-family: 'Nunito', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #e0e7ff 0%, #fce7f3 25%, #fef3c7 50%, #d1fae5 75%, #e0e7ff 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
             color: var(--text);
             min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
         }
 
-        /* --- HEADER & DEGRADÉ BLEU --- */
+        /* Particules décoratives */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            background-image:
+                radial-gradient(circle at 10% 20%, rgba(124, 58, 237, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 90% 80%, rgba(236, 72, 153, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(245, 158, 11, 0.06) 0%, transparent 50%),
+                radial-gradient(circle at 30% 70%, rgba(16, 185, 129, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 70% 30%, rgba(59, 130, 246, 0.08) 0%, transparent 50%);
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* --- BARRE DE NAVIGATION LUDIQUE --- */
         .navbar {
-            background: linear-gradient(135deg, #ffffff 0%, #e0f2fe 30%, #bae6fd 60%, #38bdf8 100%);
-            padding: 20px 30px;
-            box-shadow: 0 2px 10px rgba(14, 165, 233, 0.15);
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            padding: 16px 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
             position: sticky;
             top: 0;
             z-index: 100;
@@ -40,216 +84,426 @@
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            border-bottom: 2px solid rgba(255,255,255,0.5);
+            border-bottom: 3px solid transparent;
+            border-image: linear-gradient(90deg, var(--purple), var(--pink), var(--yellow), var(--green), var(--blue)) 1;
+            position: relative;
+        }
+
+        .navbar::after {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--purple), var(--pink), var(--yellow), var(--green), var(--blue));
+            border-radius: 0 0 20px 20px;
         }
 
         .logo {
             display: flex;
             align-items: center;
             gap: 12px;
+            background: linear-gradient(135deg, var(--purple), var(--pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
-        .logo span { font-size: 28px; }
+        .logo .icon {
+            font-size: 38px;
+            -webkit-text-fill-color: initial;
+            animation: bounceIcon 1s ease infinite;
+        }
+        @keyframes bounceIcon {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
         .logo h1 {
-            font-size: 22px;
-            font-weight: 800;
-            color: var(--blue-ultra);
-            text-shadow: 0 1px 2px rgba(255,255,255,0.8);
+            font-size: 26px;
+            font-weight: 900;
+            letter-spacing: -0.5px;
+            text-shadow: none;
         }
 
         .menu {
             display: flex;
-            gap: 8px;
+            gap: 10px;
             flex-wrap: wrap;
         }
 
         .menu-btn {
-            padding: 8px 18px;
-            border-radius: 30px;
-            border: none;
-            font-weight: 600;
-            font-size: 14px;
-            color: var(--blue-ultra);
-            background: rgba(255, 255, 255, 0.6);
-            backdrop-filter: blur(4px);
+            padding: 12px 22px;
+            border-radius: 40px;
+            border: 3px solid transparent;
+            font-weight: 800;
+            font-size: 15px;
             cursor: pointer;
-            transition: all 0.25s ease;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            transition: all 0.3s var(--bounce);
             text-decoration: none;
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 0.3px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            box-shadow: var(--shadow-sm);
+            color: white;
+            background: #94a3b8;
         }
 
+        .menu-btn:nth-child(1) { background: var(--blue); }
+        .menu-btn:nth-child(2) { background: var(--green); }
+        .menu-btn:nth-child(3) { background: var(--orange); }
+        .menu-btn:nth-child(4) { background: var(--purple); }
+        .menu-btn:nth-child(5) { background: var(--pink); }
+        .menu-btn:nth-child(6) { background: var(--yellow); color: #1e293b; }
+
         .menu-btn:hover {
-            background: #ffffff;
-            transform: translateY(-2px);
-            box-shadow: var(--shadow);
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: var(--shadow-md);
+            filter: brightness(1.1);
         }
 
         .menu-btn.active {
-            background: var(--blue-pure);
-            color: white;
-            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.4);
+            transform: translateY(-4px) scale(1.08);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+            border: 3px solid white;
+            filter: brightness(1.15);
+            animation: pulseActive 1.5s ease infinite;
         }
+
+        @keyframes pulseActive {
+            0%, 100% { box-shadow: 0 8px 25px rgba(0,0,0,0.2); }
+            50% { box-shadow: 0 12px 40px rgba(0,0,0,0.35); }
+        }
+
+        .menu-btn::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 60%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .menu-btn:hover::after { opacity: 1; }
 
         /* --- CONTENEUR PRINCIPAL --- */
         .container {
-            max-width: 1000px;
-            margin: 40px auto;
+            max-width: 1100px;
+            margin: 30px auto;
             padding: 0 20px;
+            position: relative;
+            z-index: 1;
         }
 
-        /* --- MODULE DE FORMATION VBA --- */
+        /* --- CARTE DE FORMATION --- */
         .training-section {
-            background: var(--card-bg);
-            border: 1px solid rgba(255,255,255,0.5);
-            border-radius: var(--radius);
-            padding: 35px;
-            box-shadow: var(--shadow-lg);
-            backdrop-filter: blur(8px);
-            animation: fadeSlideUp 0.5s ease;
+            background: var(--card);
+            border-radius: var(--radius-xl);
+            padding: 40px;
+            box-shadow: var(--shadow-xl);
+            animation: popIn 0.5s var(--bounce);
+            border: 3px solid #e2e8f0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .training-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: linear-gradient(90deg, var(--purple), var(--pink), var(--yellow), var(--green), var(--blue));
+        }
+
+        @keyframes popIn {
+            from { opacity: 0; transform: scale(0.9) translateY(30px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
         }
 
         .mission-header {
             display: flex;
             align-items: center;
             gap: 15px;
-            margin-bottom: 25px;
-            border-bottom: 2px solid #f1f5f9;
-            padding-bottom: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
         }
 
         .mission-badge {
-            background: linear-gradient(135deg, var(--blue-mid), var(--blue-ultra));
+            background: linear-gradient(135deg, var(--pink), var(--purple));
             color: white;
-            padding: 6px 16px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 700;
+            padding: 10px 24px;
+            border-radius: 40px;
+            font-size: 16px;
+            font-weight: 800;
             letter-spacing: 0.5px;
+            box-shadow: 0 6px 20px rgba(124, 58, 237, 0.3);
+            animation: float 3s ease-in-out infinite;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+        }
+
+        .mission-header h2 {
+            font-size: 28px;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--purple), var(--pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .mission-lesson {
-            background: #f8fafc;
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 25px;
-            border-left: 6px solid var(--blue-pure);
-            font-size: 15px;
-            line-height: 1.7;
-            color: var(--text-secondary);
+            background: linear-gradient(135deg, #faf5ff, #fdf2f8);
+            padding: 30px;
+            border-radius: var(--radius-lg);
+            margin-bottom: 30px;
+            border: 3px dashed var(--purple-light);
+            font-size: 18px;
+            line-height: 1.8;
+            color: var(--text);
+            box-shadow: var(--shadow-sm);
+            position: relative;
+        }
+
+        .mission-lesson::before {
+            content: '📚';
+            position: absolute;
+            top: -20px;
+            left: 20px;
+            font-size: 40px;
+            background: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .mission-lesson strong {
+            color: var(--purple);
+            font-size: 20px;
         }
 
         .mission-lesson code {
-            background: #e2e8f0;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 14px;
-            color: var(--blue-ultra);
-            font-weight: 600;
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            padding: 4px 12px;
+            border-radius: 8px;
+            font-size: 17px;
+            color: #92400e;
+            font-weight: 700;
+            border: 2px solid var(--yellow);
+        }
+
+        /* Zone de code */
+        label[for="codeInput"] {
+            display: block;
+            margin-bottom: 12px;
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--purple);
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .mission-code-editor {
             width: 100%;
-            font-family: 'Consolas', 'Courier New', monospace;
-            font-size: 14px;
-            padding: 18px;
-            border: 2px solid #e2e8f0;
-            border-radius: 12px;
-            background: #f8fafc;
-            min-height: 160px;
+            font-family: 'JetBrains Mono', 'Consolas', 'Courier New', monospace;
+            font-size: 17px;
+            padding: 24px;
+            border: 4px solid #e2e8f0;
+            border-radius: var(--radius-lg);
+            background: #1e293b;
+            min-height: 200px;
             resize: vertical;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
             transition: all 0.3s ease;
-            color: var(--text);
+            color: #e2e8f0;
+            line-height: 1.6;
+            box-shadow: inset 0 4px 12px rgba(0,0,0,0.2);
+            caret-color: var(--yellow);
         }
 
         .mission-code-editor:focus {
             outline: none;
-            border-color: var(--blue-pure);
-            background: #ffffff;
-            box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.15);
+            border-color: var(--yellow);
+            box-shadow: 0 0 0 8px rgba(245, 158, 11, 0.15), inset 0 4px 12px rgba(0,0,0,0.2);
+            background: #0f172a;
         }
 
+        /* Boutons d'action */
         .actions-row {
             display: flex;
-            gap: 12px;
+            gap: 16px;
             flex-wrap: wrap;
+            margin-bottom: 20px;
         }
 
         .btn {
-            display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px;
-            border-radius: 30px; font-size: 15px; font-weight: 600; 
-            cursor: pointer; border: none; transition: all 0.25s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 16px 32px;
+            border-radius: 40px;
+            font-size: 18px;
+            font-weight: 800;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s var(--bounce);
             text-decoration: none;
+            letter-spacing: 0.5px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
         }
 
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 60%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .btn:hover::after { opacity: 1; }
+
         .btn-primary {
-            background: linear-gradient(135deg, var(--blue-pure), var(--blue-ultra));
+            background: linear-gradient(135deg, var(--green), #059669);
             color: white;
-            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+            font-size: 20px;
+            padding: 18px 36px;
         }
         .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(14, 165, 233, 0.4);
+            transform: translateY(-5px) scale(1.03);
+            box-shadow: 0 14px 35px rgba(16, 185, 129, 0.5);
         }
 
         .btn-outline {
             background: white;
-            color: var(--blue-ultra);
-            border: 2px solid var(--blue-pure);
+            color: var(--purple);
+            border: 4px solid var(--purple);
+            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.15);
         }
         .btn-outline:hover {
-            background: #f0f9ff;
-            transform: translateY(-2px);
+            background: #faf5ff;
+            transform: translateY(-5px) scale(1.03);
+            box-shadow: 0 10px 25px rgba(124, 58, 237, 0.25);
         }
 
         .btn-success {
-            background: #10b981; color: white;
+            background: linear-gradient(135deg, var(--yellow), var(--orange));
+            color: white;
+            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
+            font-size: 20px;
+            padding: 18px 36px;
         }
-        .btn-success:hover { background: #059669; transform: translateY(-2px); }
+        .btn-success:hover {
+            transform: translateY(-5px) scale(1.03);
+            box-shadow: 0 14px 35px rgba(245, 158, 11, 0.5);
+        }
 
-        /* --- FEEDBACK & TOAST --- */
+        /* Zone de feedback */
         .feedback-area {
-            padding: 18px 20px;
-            border-radius: 12px;
-            margin-top: 20px;
+            padding: 24px 28px;
+            border-radius: var(--radius-lg);
+            margin-top: 24px;
             display: none;
-            font-size: 15px;
-            line-height: 1.6;
+            font-size: 18px;
+            line-height: 1.7;
+            font-weight: 600;
+            animation: popIn 0.4s var(--bounce);
+            border: 3px solid;
         }
-        .feedback-area.success { display: block; background: #d1fae5; border: 1px solid #10b981; color: #065f46; }
-        .feedback-area.error { display: block; background: #fee2e2; border: 1px solid #ef4444; color: #991b1b; }
+        .feedback-area.success {
+            display: block;
+            background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+            border-color: var(--green);
+            color: #065f46;
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.2);
+        }
+        .feedback-area.error {
+            display: block;
+            background: linear-gradient(135deg, #fee2e2, #fecaca);
+            border-color: var(--red);
+            color: #991b1b;
+            box-shadow: 0 8px 25px rgba(239, 68, 68, 0.2);
+        }
+
+        .feedback-area strong {
+            font-size: 22px;
+        }
+
+        .feedback-area code {
+            background: rgba(0,0,0,0.1);
+            padding: 2px 10px;
+            border-radius: 6px;
+            font-weight: 700;
+        }
+
+        /* Module en construction */
+        .placeholder-card {
+            background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+            padding: 30px;
+            border-radius: var(--radius-lg);
+            text-align: center;
+            font-size: 18px;
+            color: var(--text-light);
+            border: 3px dashed #94a3b8;
+        }
+
+        .placeholder-card .emoji {
+            font-size: 60px;
+            display: block;
+            margin-bottom: 15px;
+        }
 
         /* --- FOOTER --- */
         .footer {
             text-align: center;
-            margin-top: 50px;
+            margin-top: 40px;
             padding: 20px;
-            color: var(--text-secondary);
-            font-size: 14px;
-            border-top: 1px solid #e2e8f0;
-            opacity: 0.8;
+            color: var(--text-light);
+            font-size: 16px;
+            font-weight: 700;
+            background: rgba(255,255,255,0.6);
+            border-radius: 40px;
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow-sm);
         }
 
-        /* --- ANIMATIONS --- */
-        @keyframes fadeSlideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* --- RESPONSIVE --- */
+        /* Responsive */
         @media (max-width: 700px) {
-            .navbar { flex-direction: column; gap: 15px; align-items: stretch; text-align: center; }
-            .menu { justify-content: center; }
-            .menu-btn { font-size: 13px; padding: 6px 14px; }
+            .navbar { flex-direction: column; gap: 15px; align-items: center; padding: 15px; }
+            .menu { justify-content: center; gap: 8px; }
+            .menu-btn { font-size: 13px; padding: 10px 16px; }
+            .training-section { padding: 20px; }
+            .mission-header h2 { font-size: 22px; }
+            .mission-lesson { font-size: 16px; padding: 20px; }
+            .btn { font-size: 16px; padding: 14px 24px; }
         }
+
+        /* Police personnalisée */
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap');
     </style>
 </head>
 <body>
 
-    <!-- BARRE DE NAVIGATION (Menu complet) -->
+    <!-- BARRE DE NAVIGATION -->
     <nav class="navbar">
         <div class="logo">
-            <span>📚</span>
-            <h1>EduTech Pro</h1>
+            <span class="icon">🎮</span>
+            <h1>CodeQuest</h1>
         </div>
         <div class="menu">
             <button class="menu-btn" onclick="changeModule('word')">📄 Word</button>
@@ -264,91 +518,93 @@
     <!-- CONTENU PRINCIPAL -->
     <div class="container">
         <div id="mainContent" class="training-section">
-            <!-- Le contenu est généré dynamiquement par JavaScript -->
+            <!-- Généré dynamiquement -->
         </div>
-        
+
         <div class="footer">
-            🚀 Plateforme d'apprentissage interactif • Propulsé par la pratique
+            🚀 CodeQuest • Apprends le code comme un jeu vidéo !
         </div>
     </div>
 
     <script>
-        // --- DONNÉES DES MODULES ---
+        // --- CONFIGURATION DES MODULES ---
         const modules = {
             excel: {
-                title: "Mission 1 / 10 : Hello World",
-                badge: "💻 Programmation VBA",
-                lesson: `<strong>📖 Le cours :</strong><br>
-                         Pour afficher un message à l'utilisateur dans Excel VBA, on utilise l'instruction <code>MsgBox</code>. 
-                         <br>La syntaxe est : <code>MsgBox "Votre texte"</code>.<br><br>
-                         <strong>🎯 Objectif :</strong> Écris une macro qui ouvre une fenêtre avec le texte <strong>"J'ai réussi !"</strong>.`,
+                title: "Mission 1/10 : Hello World !",
+                badge: "💻 VBA Magique",
+                lesson: `<strong>📖 La Leçon du jour :</strong><br><br>
+                         Pour parler à l'ordinateur dans Excel VBA, on utilise la formule magique <code>MsgBox</code> !<br>
+                         C'est comme envoyer un message à un ami : <code>MsgBox "Ton message ici"</code><br><br>
+                         <strong>🎯 Ta Mission :</strong> Écris un script qui affiche <strong>"J'ai réussi !"</strong> dans une petite fenêtre.<br>
+                         <span style="font-size:0.9em; color:var(--text-light);">(N'oublie pas les guillemets, c'est le contenant de ton message !)</span>`,
                 codePlaceholder: `Sub Mission1()
-    
+    ' Écris ton code ici !
 End Sub`,
                 correctRegex: /Sub\s+Mission1\(\)[\s\S]*MsgBox\s*"J'ai réussi !"[\s\S]*End\s+Sub/i
             },
             word: {
                 title: "Module Word",
                 badge: "📄 Traitement de texte",
-                lesson: "<strong>Module en construction.</strong><br>Bientôt des exercices sur les styles, la mise en page et le publipostage.",
-                codePlaceholder: "// Pas de code pour ce module pour l'instant",
+                lesson: "",
+                codePlaceholder: "",
                 correctRegex: null
             },
             powerpoint: {
                 title: "Module PowerPoint",
                 badge: "📽️ Présentations",
-                lesson: "<strong>Module en construction.</strong><br>Bientôt des exercices sur les diapositives maîtres et les animations.",
-                codePlaceholder: "// Module indisponible",
+                lesson: "",
+                codePlaceholder: "",
                 correctRegex: null
             },
             access: {
                 title: "Module Access",
                 badge: "🗄️ Bases de données",
-                lesson: "<strong>Module en construction.</strong><br>Bientôt des requêtes SQL et des formulaires.",
-                codePlaceholder: "// Module indisponible",
+                lesson: "",
+                codePlaceholder: "",
                 correctRegex: null
             },
             outlook: {
                 title: "Module Outlook",
-                badge: "📧 Gestion des emails",
-                lesson: "<strong>Module en construction.</strong><br>Bientôt la gestion des règles et du calendrier.",
-                codePlaceholder: "// Module indisponible",
+                badge: "📧 Emails",
+                lesson: "",
+                codePlaceholder: "",
                 correctRegex: null
             },
             internet: {
                 title: "Module Internet",
-                badge: "🌐 Navigation & Web",
-                lesson: "<strong>Module en construction.</strong><br>Bientôt des exercices sur la sécurité et les moteurs de recherche.",
-                codePlaceholder: "// Module indisponible",
+                badge: "🌐 Web",
+                lesson: "",
+                codePlaceholder: "",
                 correctRegex: null
             }
         };
 
-        // --- FONCTION DE CHANGEMENT DE MODULE ---
+        // --- CHANGEMENT DE MODULE ---
         function changeModule(moduleKey) {
-            // Mise à jour des boutons du menu
             document.querySelectorAll('.menu-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
+            const clickedBtn = Array.from(document.querySelectorAll('.menu-btn')).find(
+                btn => btn.textContent.toLowerCase().includes(moduleKey)
+            );
+            if (clickedBtn) clickedBtn.classList.add('active');
 
             const mod = modules[moduleKey];
             const container = document.getElementById('mainContent');
 
-            // Si le module n'a pas de validation (pas de Regex), on affiche juste une leçon statique
-            if(!mod.correctRegex) {
+            if (!mod.correctRegex) {
                 container.innerHTML = `
                     <div class="mission-header">
                         <span class="mission-badge">${mod.badge}</span>
                         <h2>${mod.title}</h2>
                     </div>
-                    <div class="mission-lesson">${mod.lesson}</div>
-                    <div style="background:#e2e8f0; padding:20px; border-radius:12px; text-align:center; color: var(--text-secondary);">
-                        🛠️ Ce module est en cours de développement. Revenez bientôt !
+                    <div class="placeholder-card">
+                        <span class="emoji">🛠️</span>
+                        <strong>Nouveau monde en construction !</strong><br>
+                        Ce module arrive très bientôt avec des défis amusants. Reste connecté !
                     </div>
                 `;
                 return;
             }
 
-            // Affichage du module Excel (interactif)
             container.innerHTML = `
                 <div class="mission-header">
                     <span class="mission-badge">${mod.badge}</span>
@@ -359,7 +615,7 @@ End Sub`,
                     ${mod.lesson}
                 </div>
 
-                <label for="codeInput" style="font-weight: 600; display: block; margin-bottom: 10px; font-size: 15px; color: var(--blue-ultra);">✍️ À ton tour, écris le script ci-dessous :</label>
+                <label for="codeInput">⌨️ À toi de jouer, jeune codeur :</label>
                 <textarea id="codeInput" class="mission-code-editor">${mod.codePlaceholder}</textarea>
 
                 <div class="actions-row">
@@ -369,56 +625,103 @@ End Sub`,
 
                 <div id="feedback" class="feedback-area"></div>
             `;
+
+            // Focus sur le textarea
+            setTimeout(() => {
+                const ta = document.getElementById('codeInput');
+                if (ta) ta.focus();
+            }, 100);
         }
 
-        // --- MOTEUR DE VALIDATION ---
+        // --- VALIDATION DU CODE ---
         function validateCode(moduleKey) {
             const mod = modules[moduleKey];
             const codeInput = document.getElementById('codeInput');
             const feedback = document.getElementById('feedback');
-
-            if(!mod.correctRegex) return;
+            if (!mod.correctRegex || !codeInput) return;
 
             const userCode = codeInput.value;
 
-            // Vérification avec l'expression régulière
             if (mod.correctRegex.test(userCode)) {
-                // SUCCÈS
                 feedback.className = 'feedback-area success';
                 feedback.innerHTML = `
-                    <strong>🎉 Mission validée !</strong><br><br>
-                    Bravo ! Tu as parfaitement compris la syntaxe de base.<br>
-                    <em>MsgBox</em> sert à créer une fenêtre de dialogue, et tout texte doit être entre guillemets.<br><br>
-                    🟢 <strong>Prochaine étape :</strong> La Mission 2 arrive bientôt...
+                    <strong>🎉 MISSION RÉUSSIE ! 🎉</strong><br><br>
+                    Incroyable ! Tu as maîtrisé la base du VBA !<br>
+                    <code>MsgBox</code> est la clé pour dialoguer avec l'utilisateur.<br><br>
+                    🏆 <strong>+100 points d'expérience</strong><br>
+                    🟢 Prochaine mission : les variables magiques !
                 `;
-                // On pourrait ici désactiver le bouton "Valider" pour signifier que c'est fini.
+                // Effet de célébration
+                confettiEffect();
             } else {
-                // ÉCHEC
                 let hint = "";
-                if(!/Sub\s+Mission1\(\)/i.test(userCode)) hint = "💡 Indice : Vérifie le nom de ta macro, elle doit s'appeler exactement <code>Sub Mission1()</code>.";
-                else if(!/MsgBox\s*"J'ai réussi !"/i.test(userCode)) hint = "💡 Indice : Utilise <code>MsgBox</code> et n'oublie pas les guillemets <code>\" \"</code> autour du texte.";
-                else if(!/End\s+Sub/i.test(userCode)) hint = "💡 Indice : Il manque <code>End Sub</code> à la fin de ton script.";
-                else hint = "💡 Indice : Vérifie la casse (majuscules/minuscules) et les guillemets.";
+                if (!/Sub\s+Mission1\(\)/i.test(userCode))
+                    hint = "🔍 Vérifie le début : <code>Sub Mission1()</code> (respecte bien les majuscules !)";
+                else if (!/MsgBox\s*"J'ai réussi !"/i.test(userCode))
+                    hint = "💬 Il te faut <code>MsgBox \"J'ai réussi !\"</code> — attention aux guillemets droits !";
+                else if (!/End\s+Sub/i.test(userCode))
+                    hint = "🏁 N'oublie pas de fermer avec <code>End Sub</code> !";
+                else
+                    hint = "🧐 Petite erreur de syntaxe... Vérifie les guillemets et les espaces.";
 
                 feedback.className = 'feedback-area error';
                 feedback.innerHTML = `
-                    <strong>❌ Pas tout à fait !</strong><br><br>
-                    Ton code n'est pas tout à fait correct.<br>
-                    ${hint}
+                    <strong>🤔 Presque... Réessaie !</strong><br><br>
+                    ${hint}<br>
+                    <span style="font-size:0.9em;">Tu y es presque, ne lâche rien ! 💪</span>
                 `;
+            }
+        }
+
+        // --- EFFET DE CONFETTIS SIMPLE ---
+        function confettiEffect() {
+            const colors = ['#7c3aed', '#ec4899', '#f59e0b', '#10b981', '#3b82f6', '#f97316'];
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.style.cssText = `
+                    position: fixed;
+                    top: -20px;
+                    left: ${Math.random() * 100}%;
+                    width: ${Math.random() * 12 + 6}px;
+                    height: ${Math.random() * 12 + 6}px;
+                    background: ${colors[Math.floor(Math.random() * colors.length)]};
+                    border-radius: ${Math.random() > 0.5 ? '50%' : '2px'};
+                    z-index: 9999;
+                    pointer-events: none;
+                    animation: confettiFall ${Math.random() * 2 + 2}s ease-in forwards;
+                    animation-delay: ${Math.random() * 0.5}s;
+                `;
+                document.body.appendChild(confetti);
+                setTimeout(() => confetti.remove(), 3000);
+            }
+
+            if (!document.getElementById('confetti-style')) {
+                const style = document.createElement('style');
+                style.id = 'confetti-style';
+                style.textContent = `
+                    @keyframes confettiFall {
+                        0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+                        100% { transform: translateY(100vh) rotate(${Math.random() * 720}deg); opacity: 0; }
+                    }
+                `;
+                document.head.appendChild(style);
             }
         }
 
         // --- RÉINITIALISATION ---
         function resetCode(moduleKey) {
             const mod = modules[moduleKey];
-            document.getElementById('codeInput').value = mod.codePlaceholder;
-            document.getElementById('feedback').className = 'feedback-area';
-            document.getElementById('feedback').innerHTML = '';
+            const codeInput = document.getElementById('codeInput');
+            const feedback = document.getElementById('feedback');
+            if (codeInput) codeInput.value = mod.codePlaceholder;
+            if (feedback) {
+                feedback.className = 'feedback-area';
+                feedback.innerHTML = '';
+            }
         }
 
-        // Chargement initial (Excel au démarrage)
-        document.addEventListener('DOMContentLoaded', function() {
+        // --- DÉMARRAGE ---
+        document.addEventListener('DOMContentLoaded', () => {
             changeModule('excel');
         });
     </script>
