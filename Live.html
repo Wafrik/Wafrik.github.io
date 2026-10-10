@@ -25,7 +25,6 @@
     overflow-x: hidden;
   }
 
-  /* ========== BACKGROUND DÉCORATIF ========== */
   body::before {
     content: '';
     position: fixed;
@@ -130,22 +129,18 @@
     margin-top: 8px;
   }
 
-  /* ========== CTA LIVE (remplace l'iframe) ========== */
-  .live-cta {
+  /* ========== LECTEUR VIDÉO ========== */
+  .video-wrapper {
+    position: relative;
     width: 100%;
     aspect-ratio: 16 / 9;
-    background: linear-gradient(135deg, #1565c0 0%, #0d47a1 100%);
+    background: #000000;
     border-radius: 20px;
+    overflow: hidden;
     box-shadow: 
       0 20px 60px rgba(0, 0, 0, 0.5),
-      0 0 0 3px rgba(255, 215, 0, 0.5),
+      0 0 0 3px rgba(255, 215, 0, 0.4),
       0 0 0 6px rgba(13, 71, 161, 0.6);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 30px;
-    position: relative;
-    overflow: hidden;
     animation: glow 3s ease-in-out infinite alternate;
   }
 
@@ -164,98 +159,59 @@
     }
   }
 
-  .live-cta::before {
-    content: '';
+  .video-wrapper iframe {
     position: absolute;
-    inset: 0;
-    background: 
-      radial-gradient(circle at 30% 30%, rgba(255, 215, 0, 0.25) 0%, transparent 50%),
-      radial-gradient(circle at 70% 70%, rgba(255, 255, 255, 0.10) 0%, transparent 50%);
-    pointer-events: none;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
   }
 
-  .live-cta-inner {
+  /* ========== FALLBACK ========== */
+  .fallback {
+    margin-top: -12px;
+    padding: 16px 20px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
     text-align: center;
-    position: relative;
-    z-index: 2;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
   }
 
-  .live-icon {
-    font-size: 70px;
-    animation: pulse 2s ease-in-out infinite;
-    filter: drop-shadow(0 4px 16px rgba(255, 0, 0, 0.6));
-  }
-
-  .live-cta-title {
-    font-size: 32px;
-    font-weight: 800;
-    color: #ffffff;
-    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
-    margin: 0;
-    letter-spacing: 0.5px;
-  }
-
-  .live-cta-sub {
-    font-size: 17px;
-    color: rgba(255, 255, 255, 0.9);
+  .fallback-text {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.85);
     margin: 0;
   }
 
-  .live-button {
+  .fallback-button {
     display: inline-flex;
     align-items: center;
-    gap: 12px;
-    padding: 20px 44px;
-    margin-top: 16px;
+    gap: 8px;
+    padding: 12px 28px;
     background: linear-gradient(180deg, #ff1744 0%, #d50000 100%);
     color: #ffffff;
-    font-size: 22px;
-    font-weight: 800;
+    font-size: 15px;
+    font-weight: 700;
     text-decoration: none;
     border-radius: 50px;
-    letter-spacing: 1.5px;
-    box-shadow: 
-      0 8px 24px rgba(255, 23, 68, 0.5),
-      0 0 0 3px rgba(255, 255, 255, 0.2);
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 16px rgba(255, 23, 68, 0.5);
     transition: transform 0.2s, box-shadow 0.2s;
     cursor: pointer;
-    text-transform: uppercase;
-    animation: buttonPulse 2s ease-in-out infinite;
   }
 
-  @keyframes buttonPulse {
-    0%, 100% {
-      box-shadow: 
-        0 8px 24px rgba(255, 23, 68, 0.5),
-        0 0 0 3px rgba(255, 255, 255, 0.2);
-    }
-    50% {
-      box-shadow: 
-        0 12px 32px rgba(255, 23, 68, 0.8),
-        0 0 0 5px rgba(255, 255, 255, 0.35);
-    }
-  }
-
-  .live-button:hover {
+  .fallback-button:hover {
     transform: scale(1.05);
-    box-shadow: 
-      0 12px 32px rgba(255, 23, 68, 0.7),
-      0 0 0 3px rgba(255, 255, 255, 0.4);
-    animation: none;
+    box-shadow: 0 6px 20px rgba(255, 23, 68, 0.7);
   }
 
-  .live-button:active {
+  .fallback-button:active {
     transform: scale(0.98);
-  }
-
-  .live-cta-note {
-    font-size: 13px;
-    color: rgba(255, 255, 255, 0.7);
-    margin: 4px 0 0 0;
   }
 
   /* ========== INFO BAR ========== */
@@ -334,35 +290,26 @@
       font-size: 14px;
     }
 
-    .live-cta {
+    .video-wrapper {
       border-radius: 14px;
-      padding: 20px;
       box-shadow: 
         0 12px 40px rgba(0, 0, 0, 0.5),
         0 0 0 2px rgba(255, 215, 0, 0.5);
       animation: none;
     }
 
-    .live-cta-title {
-      font-size: 22px;
+    .fallback {
+      padding: 12px 14px;
+      gap: 8px;
     }
 
-    .live-cta-sub {
-      font-size: 14px;
+    .fallback-text {
+      font-size: 12px;
     }
 
-    .live-icon {
-      font-size: 50px;
-    }
-
-    .live-button {
-      font-size: 16px;
-      padding: 16px 32px;
-      letter-spacing: 1px;
-    }
-
-    .live-cta-note {
-      font-size: 11px;
+    .fallback-button {
+      font-size: 13px;
+      padding: 10px 22px;
     }
 
     .info-bar {
@@ -389,25 +336,6 @@
       font-size: 12px;
     }
 
-    .live-cta-title {
-      font-size: 18px;
-    }
-
-    .live-cta-sub {
-      font-size: 13px;
-    }
-
-    .live-icon {
-      font-size: 40px;
-    }
-
-    .live-button {
-      font-size: 14px;
-      padding: 14px 26px;
-      letter-spacing: 0.5px;
-      gap: 8px;
-    }
-
     .info-item {
       font-size: 11px;
     }
@@ -428,33 +356,15 @@
       gap: 8px;
     }
 
-    .page-title, .page-subtitle, .info-bar, .footer {
+    .page-title, .page-subtitle, .info-bar, .footer, .fallback {
       display: none;
     }
 
-    .live-cta {
+    .video-wrapper {
       border-radius: 8px;
       max-height: calc(100vh - 50px);
       width: auto;
       margin: 0 auto;
-      padding: 12px;
-    }
-
-    .live-cta-title {
-      font-size: 20px;
-    }
-
-    .live-cta-sub {
-      font-size: 13px;
-    }
-
-    .live-icon {
-      font-size: 36px;
-    }
-
-    .live-button {
-      font-size: 14px;
-      padding: 12px 24px;
     }
   }
 </style>
@@ -480,20 +390,28 @@
     <p class="page-subtitle">Restez connectés pour ne rien rater</p>
   </div>
 
-  <!-- CTA LIVE (remplace l'iframe bloquée) -->
-  <div class="live-cta">
-    <div class="live-cta-inner">
-      <div class="live-icon">🔴</div>
-      <h2 class="live-cta-title">Le live est en cours !</h2>
-      <p class="live-cta-sub">Clique ci-dessous pour nous rejoindre en direct</p>
-      <a href="https://www.facebook.com/61582985333142/videos/1751501562775472/" 
-         target="_blank" 
-         rel="noopener" 
-         class="live-button">
-        ▶️ REGARDER LE LIVE
-      </a>
-      <p class="live-cta-note">Le live s'ouvrira sur Facebook</p>
-    </div>
+  <!-- LECTEUR FACEBOOK LIVE -->
+  <div class="video-wrapper">
+    <iframe 
+      src="https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2F61582985333142%2Fvideos%2F1751501562775472%2F&show_text=false&autoplay=true"
+      scrolling="no" 
+      frameborder="0" 
+      allowfullscreen="true"
+      allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share">
+    </iframe>
+  </div>
+
+  <!-- FALLBACK si l'iframe est bloquée par le navigateur -->
+  <div class="fallback">
+    <p class="fallback-text">
+      💡 Le live ne s'affiche pas ? Ton navigateur bloque peut-être les vidéos intégrées.
+    </p>
+    <a href="https://www.facebook.com/61582985333142/videos/1751501562775472/" 
+       target="_blank" 
+       rel="noopener" 
+       class="fallback-button">
+      ▶️ OUVRIR LE LIVE SUR FACEBOOK
+    </a>
   </div>
 
   <!-- INFO BAR -->
