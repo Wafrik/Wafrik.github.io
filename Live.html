@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>📊 Évaluation Excel - Modules</title>
+    <title>Évaluation Excel - Modules</title>
+    <!-- Inclusion de jsPDF pour la génération du PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         :root {
             --bg-main: #0f172a; --card-bg: #ffffff; --text-dark: #1e293b; --text-light: #64748b;
@@ -21,6 +23,12 @@
                         radial-gradient(circle at bottom left, rgba(33,163,102,0.2), transparent 40%), #0f172a;
         }
         
+        /* SVG STYLES */
+        svg { display: inline-block; vertical-align: middle; }
+        .icon { width: 24px; height: 24px; fill: currentColor; }
+        .icon-lg { width: 64px; height: 64px; fill: white; opacity: 0.9; }
+        .icon-sm { width: 18px; height: 18px; fill: currentColor; }
+
         /* ÉCRAN DE SÉLECTION */
         .eval-container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; min-height: 100vh; display: flex; flex-direction: column; position: relative; z-index: 1; }
         .module-select-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; text-align: center; animation: slideUp 0.8s ease-out; }
@@ -34,7 +42,7 @@
             position: relative; display: flex; flex-direction: column;
         }
         .module-card:hover { transform: translateY(-10px); border-color: var(--excel-light); box-shadow: 0 20px 40px rgba(33,163,102,0.3); }
-        .module-image { height: 160px; width: 100%; display: flex; align-items: center; justify-content: center; font-size: 60px; position: relative; }
+        .module-image { height: 140px; width: 100%; display: flex; align-items: center; justify-content: center; position: relative; }
         .module-image::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 50%; background: linear-gradient(to top, rgba(15,23,42,1), transparent); }
         .module-card:nth-child(1) .module-image { background: linear-gradient(135deg, #1e3a8a, #3b82f6); }
         .module-card:nth-child(2) .module-image { background: linear-gradient(135deg, #7e22ce, #a855f7); }
@@ -63,7 +71,7 @@
         .option-item.selected .option-letter { background: var(--excel-green); color: white; }
         
         .nav-buttons { display: flex; justify-content: space-between; margin-top: 30px; }
-        .btn { padding: 12px 25px; border-radius: 10px; font-weight: 700; cursor: pointer; border: none; transition: all 0.2s; font-size: 16px; }
+        .btn { padding: 12px 25px; border-radius: 10px; font-weight: 700; cursor: pointer; border: none; transition: all 0.2s; font-size: 16px; display: flex; align-items: center; gap: 8px; }
         .btn-next { background: var(--excel-green); color: white; }
         .btn-next:hover { background: #0b5e31; }
         .btn-prev { background: #e2e8f0; color: var(--text-dark); }
@@ -84,10 +92,12 @@
         .start-screen { display: none; flex-direction: column; align-items: center; text-align: center; justify-content: center; flex: 1; }
         .rules-card { background: rgba(255,255,255,0.05); border-radius: 20px; padding: 30px; max-width: 600px; text-align: left; margin: 20px 0; border: 1px solid rgba(255,255,255,0.1); }
         .rules-card ul { list-style: none; }
-        .rules-card li { padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; gap: 10px; align-items: center; }
+        .rules-card li { padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; gap: 15px; align-items: center; }
         .rules-card li:last-child { border-bottom: none; }
-        .btn-start { background: linear-gradient(135deg, var(--excel-light), var(--excel-green)); color: white; font-size: 20px; padding: 20px 50px; border-radius: 50px; font-weight: 900; border: none; cursor: pointer; box-shadow: 0 10px 30px rgba(16,124,65,0.4); transition: transform 0.3s; }
+        .btn-start { background: linear-gradient(135deg, var(--excel-light), var(--excel-green)); color: white; font-size: 20px; padding: 20px 50px; border-radius: 50px; font-weight: 900; border: none; cursor: pointer; box-shadow: 0 10px 30px rgba(16,124,65,0.4); transition: transform 0.3s; display: flex; align-items: center; gap: 10px; }
         .btn-start:hover { transform: scale(1.05); }
+        .btn-download { background: #ef4444; color: white; font-size: 16px; padding: 15px 30px; border-radius: 10px; font-weight: bold; border: none; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: background 0.2s; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4); }
+        .btn-download:hover { background: #dc2626; }
         
         @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -97,6 +107,28 @@
 
 <div class="bg-animated"></div>
 
+<!-- DÉFINITION DES SVG (Bibliothèque d'icônes) -->
+<svg style="display: none;">
+    <symbol id="icon-chart" viewBox="0 0 24 24"><path d="M4 20h16v2H4v-2zm2-8h2v6H6v-6zm4-4h2v10h-2V8zm4-4h2v14h-2V4zm4 6h2v8h-2v-8z"/></symbol>
+    <symbol id="icon-calculator" viewBox="0 0 24 24"><path d="M19 2H5c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-8 16H7v-2h4v2zm0-4H7v-2h4v2zm0-4H7V8h4v2zm6 8h-4v-2h4v2zm0-4h-4v-2h4v2zm0-4h-4V8h4v2zM9 6H7V4h2v2zm6 0h-4V4h4v2z"/></symbol>
+    <symbol id="icon-pages" viewBox="0 0 24 24"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-3 9H9V9h8v2zm-4 4H9v-2h4v2zm4-8H9V5h8v2z"/></symbol>
+    <symbol id="icon-graph" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></symbol>
+    <symbol id="icon-database" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 4.02 2 6.5v11C2 19.98 6.48 22 12 22s10-2.02 10-4.5v-11C22 4.02 17.52 2 12 2zm0 2c4.42 0 8 1.34 8 2.5S16.42 9 12 9 4 7.66 4 6.5 7.58 4 12 4zm8 13.5c0 1.16-3.58 2.5-8 2.5s-8-1.34-8-2.5v-2.08c1.85 1.02 4.82 1.58 8 1.58s6.15-.56 8-1.58v2.08zm0-5.5c0 1.16-3.58 2.5-8 2.5s-8-1.34-8-2.5V9.92c1.85 1.02 4.82 1.58 8 1.58s6.15-.56 8-1.58V12z"/></symbol>
+    <symbol id="icon-check" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></symbol>
+    <symbol id="icon-cross" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/></symbol>
+    <symbol id="icon-timer" viewBox="0 0 24 24"><path d="M15 1H9v2h6V1zm-4 13h2V8h-2v6zm8.03-6.61l1.42-1.42c-.43-.51-.9-.99-1.41-1.41l-1.42 1.42C16.07 4.74 14.12 4 12 4c-4.97 0-9 4.03-9 9s4.02 9 9 9 9-4.03 9-9c0-2.12-.74-4.07-1.97-5.61zM12 20c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/></symbol>
+    <symbol id="icon-eye" viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></symbol>
+    <symbol id="icon-save" viewBox="0 0 24 24"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></symbol>
+    <symbol id="icon-trophy" viewBox="0 0 24 24"><path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94.63 1.5 1.98 2.63 3.61 2.96V19H7v2h10v-2h-4v-3.1c1.63-.33 2.98-1.46 3.61-2.96C19.08 12.63 21 10.55 21 8V7c0-1.1-.9-2-2-2zM7 8V7h10v1c0 3.31-2.69 6-6 6s-6-2.69-6-6z"/></symbol>
+    <symbol id="icon-download" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></symbol>
+    <symbol id="icon-arrow-left" viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></symbol>
+    <symbol id="icon-arrow-right" viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></symbol>
+    <symbol id="icon-rocket" viewBox="0 0 24 24"><path d="M12 2c0 0-4 3.13-4 8.5 0 2.23 1.05 4.21 2.71 5.5C9.39 17.51 8 19.73 8 22h8c0-2.27-1.39-4.49-2.71-6 1.66-1.29 2.71-3.27 2.71-5.5C16 5.13 12 2 12 2zM8.5 8.5c0-2.17 1.19-3.88 2.05-4.88.86 1 2.05 2.71 2.05 4.88 0 1.53-.83 3-2.05 3.73C9.33 11.5 8.5 10.03 8.5 8.5z"/></symbol>
+    <symbol id="icon-refresh" viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></symbol>
+    <symbol id="icon-home" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></symbol>
+    <symbol id="icon-list" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></symbol>
+</svg>
+
 <div class="eval-container">
     <!-- ÉCRAN 1 : SÉLECTION DU MODULE -->
     <div class="module-select-screen" id="screenSelect">
@@ -104,35 +136,35 @@
         <p class="subtitle">Choisissez le module à évaluer (30 questions)</p>
         <div class="module-grid">
             <div class="module-card" onclick="selectModule('calculs')">
-                <div class="module-image">📊</div>
+                <div class="module-image"><svg class="icon-lg"><use href="#icon-chart"></use></svg></div>
                 <div class="module-info">
                     <div class="module-title">Feuille de calculs simples</div>
                     <div class="module-desc">Formules de base, opérateurs, mise en forme</div>
                 </div>
             </div>
             <div class="module-card" onclick="selectModule('formules')">
-                <div class="module-image">🧮</div>
+                <div class="module-image"><svg class="icon-lg"><use href="#icon-calculator"></use></svg></div>
                 <div class="module-info">
                     <div class="module-title">Formules de calculs</div>
                     <div class="module-desc">Si, Somme, RechercheV, fonctions avancées</div>
                 </div>
             </div>
             <div class="module-card" onclick="selectModule('multifeuilles')">
-                <div class="module-image">📑</div>
+                <div class="module-image"><svg class="icon-lg"><use href="#icon-pages"></use></svg></div>
                 <div class="module-info">
                     <div class="module-title">Travail multi-feuilles</div>
                     <div class="module-desc">Références croisées, liaisons, consolidation</div>
                 </div>
             </div>
             <div class="module-card" onclick="selectModule('graphiques')">
-                <div class="module-image">📈</div>
+                <div class="module-image"><svg class="icon-lg"><use href="#icon-graph"></use></svg></div>
                 <div class="module-info">
                     <div class="module-title">Les graphiques</div>
                     <div class="module-desc">Histogrammes, courbes, secteurs, personnalisation</div>
                 </div>
             </div>
             <div class="module-card" onclick="selectModule('tcd')">
-                <div class="module-image">🗄️</div>
+                <div class="module-image"><svg class="icon-lg"><use href="#icon-database"></use></svg></div>
                 <div class="module-info">
                     <div class="module-title">Bases de données et TCD</div>
                     <div class="module-desc">Tableaux croisés, filtres, segments</div>
@@ -146,36 +178,50 @@
         <h1 style="font-size: 36px; margin-bottom: 10px;" id="startTitle">Module</h1>
         <p style="color: rgba(255,255,255,0.7); font-size: 18px;">Prêt à démarrer l'évaluation ?</p>
         <div class="rules-card">
-            <h3 style="color: var(--excel-light); margin-bottom: 15px;">📋 Règles de l'examen</h3>
+            <h3 style="color: var(--excel-light); margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                <svg class="icon"><use href="#icon-list"></use></svg> Règles de l'examen
+            </h3>
             <ul>
-                <li><span>⏱️</span> 30 secondes par question</li>
-                <li><span>👁️</span> Anti-triche : changement d'onglet = question invalidée</li>
-                <li><span>💾</span> Sauvegarde automatique de votre progression</li>
-                <li><span>🏆</span> Corrigé complet disponible à la fin</li>
+                <li><svg class="icon" style="color: #f59e0b;"><use href="#icon-timer"></use></svg> 30 secondes par question</li>
+                <li><svg class="icon" style="color: #3b82f6;"><use href="#icon-eye"></use></svg> Anti-triche : changement d'onglet = question invalidée</li>
+                <li><svg class="icon" style="color: #10b981;"><use href="#icon-save"></use></svg> Sauvegarde automatique de votre progression</li>
+                <li><svg class="icon" style="color: #f43f5e;"><use href="#icon-trophy"></use></svg> Corrigé complet téléchargeable en PDF à la fin</li>
             </ul>
         </div>
-        <button class="btn-start" onclick="startExam()">🚀 COMMENCER</button>
-        <button class="btn btn-prev" style="margin-top: 20px;" onclick="backToMenu()">↩ Retour</button>
+        <button class="btn-start" onclick="startExam()">
+            <svg class="icon" style="fill: white;"><use href="#icon-rocket"></use></svg> COMMENCER
+        </button>
+        <button class="btn btn-prev" style="margin-top: 20px; background: transparent; color: white; border: 1px solid rgba(255,255,255,0.2);" onclick="backToMenu()">
+            <svg class="icon"><use href="#icon-arrow-left"></use></svg> Retour
+        </button>
     </div>
 
     <!-- ÉCRAN 3 : EXAMEN -->
     <div class="exam-screen" id="screenExam">
         <div class="exam-topbar">
-            <div style="font-weight: bold; font-size: 18px;" id="examModuleTitle">Module</div>
-            <div class="timer-box" id="timerBox">⏱️ 30s</div>
+            <div style="font-weight: bold; font-size: 18px; display: flex; align-items: center; gap: 10px;" id="examModuleTitle">
+                <svg class="icon" style="color: var(--excel-light);"><use href="#icon-chart"></use></svg> Module
+            </div>
+            <div class="timer-box" id="timerBox">
+                <svg class="icon"><use href="#icon-timer"></use></svg> <span id="timerText">30s</span>
+            </div>
         </div>
         <div class="progress-bar"><div class="progress-fill" id="progressBar"></div></div>
         
         <div class="question-card">
             <div style="display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 14px; color: var(--text-light); font-weight: bold;">
                 <span id="questionCounter">Question 1 / 30</span>
-                <span id="questionLevel">Niveau</span>
+                <span id="questionLevel" style="background: #f1f5f9; padding: 3px 10px; border-radius: 20px;">Niveau</span>
             </div>
             <div class="question-text" id="questionText">Chargement...</div>
             <div class="options-list" id="optionsList"></div>
             <div class="nav-buttons">
-                <button class="btn btn-prev" id="btnPrev" onclick="prevQuestion()" disabled>⬅️ Précédent</button>
-                <button class="btn btn-next" id="btnNext" onclick="nextQuestion()">Suivant ➡️</button>
+                <button class="btn btn-prev" id="btnPrev" onclick="prevQuestion()" disabled>
+                    <svg class="icon"><use href="#icon-arrow-left"></use></svg> Précédent
+                </button>
+                <button class="btn btn-next" id="btnNext" onclick="nextQuestion()">
+                    Suivant <svg class="icon" style="fill: white;"><use href="#icon-arrow-right"></use></svg>
+                </button>
             </div>
         </div>
     </div>
@@ -184,11 +230,18 @@
     <div class="result-screen" id="screenResult">
         <div class="score-circle" id="scoreCircle">0%</div>
         <h2 style="font-size: 32px; margin-bottom: 10px;" id="resultMessage">Félicitations !</h2>
-        <p style="color: rgba(255,255,255,0.6); margin-bottom: 20px;" id="resultDetails">0/30 bonnes réponses</p>
+        <p style="color: rgba(255,255,255,0.6); margin-bottom: 20px; font-size: 18px;" id="resultDetails">0/30 bonnes réponses</p>
         
-        <div style="display: flex; gap: 15px; margin-bottom: 20px;">
-            <button class="btn btn-finish" onclick="retryExam()">🔄 Réessayer</button>
-            <button class="btn btn-prev" onclick="backToMenu()">🏠 Menu principal</button>
+        <div style="display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; justify-content: center;">
+            <button class="btn btn-prev" onclick="backToMenu()" style="background: rgba(255,255,255,0.1); color: white;">
+                <svg class="icon"><use href="#icon-home"></use></svg> Menu principal
+            </button>
+            <button class="btn btn-finish" onclick="retryExam()">
+                <svg class="icon" style="fill: white;"><use href="#icon-refresh"></use></svg> Réessayer
+            </button>
+            <button class="btn-download" onclick="downloadPDF()">
+                <svg class="icon" style="fill: white;"><use href="#icon-download"></use></svg> Télécharger le PDF
+            </button>
         </div>
 
         <div class="correction-list" id="correctionList"></div>
@@ -203,7 +256,6 @@ const EXAM_DATA = {
     'calculs': {
         title: 'Feuille de calculs simples',
         questions: [
-            // 10 Débutant
             { q: "Quelle est l'extension d'un fichier Excel ?", o: [".docx", ".xlsx", ".pdf", ".txt"], a: 1, lvl: "Débutant" },
             { q: "Quel symbole commence toujours une formule ?", o: ["+", "-", "=", "@"], a: 2, lvl: "Débutant" },
             { q: "Comment sélectionner toute une colonne ?", o: ["Clic sur la lettre de colonne", "Ctrl + A", "Clic sur le numéro de ligne", "F5"], a: 0, lvl: "Débutant" },
@@ -214,7 +266,6 @@ const EXAM_DATA = {
             { q: "Que fait le bouton 'Annuler' ?", o: ["Efface tout", "Annule la dernière action", "Ferme le fichier", "Sauvegarde"], a: 1, lvl: "Débutant" },
             { q: "Quelle est la largeur par défaut d'une colonne ?", o: ["8,43", "10", "12", "15"], a: 0, lvl: "Débutant" },
             { q: "Comment figer une ligne d'en-tête ?", o: ["Affichage > Figer les volets", "Accueil > Figer", "Insertion > Figer", "Données > Figer"], a: 0, lvl: "Débutant" },
-            // 10 Intermédiaire
             { q: "Quelle formule additionne A1 à A10 ?", o: ["=SOMME(A1:A10)", "=ADD(A1:A10)", "=TOTAL(A1:A10)", "=A1+A10"], a: 0, lvl: "Intermédiaire" },
             { q: "Comment faire une moyenne sans les zéros ?", o: ["MOYENNE.SI", "MOYENNE", "MOYENNE.SI.ENS", "MOYENNE.SANS.ZERO"], a: 0, lvl: "Intermédiaire" },
             { q: "Quel est le résultat de =SI(2>1;\"Vrai\";\"Faux\") ?", o: ["Vrai", "Faux", "Erreur", "1"], a: 0, lvl: "Intermédiaire" },
@@ -225,7 +276,6 @@ const EXAM_DATA = {
             { q: "Comment mettre du texte en majuscule ?", o: ["MAJUSCULE()", "MINUSCULE()", "NOMPROPRE()", "TEXTE()"], a: 0, lvl: "Intermédiaire" },
             { q: "Quel est le format pour une date en français ?", o: ["jj/mm/aaaa", "mm/dd/yyyy", "yyyy-mm-dd", "dd-mm-yy"], a: 0, lvl: "Intermédiaire" },
             { q: "Comment faire un tri alphabétique ?", o: ["Données > Trier", "Accueil > Trier", "Insertion > Trier", "Formules > Trier"], a: 0, lvl: "Intermédiaire" },
-            // 10 Avancé
             { q: "Quelle fonction permet de rechercher une valeur par ligne et colonne ?", o: ["RECHERCHEX", "RECHERCHEV", "INDEX/EQUIV", "RECHERCHE"], a: 2, lvl: "Avancé" },
             { q: "Comment créer une liste déroulante ?", o: ["Données > Validation des données", "Accueil > Liste", "Insertion > Contrôle", "Formules > Liste"], a: 0, lvl: "Avancé" },
             { q: "Que fait la fonction DECALER ?", o: ["Décale une plage de cellules", "Efface une plage", "Copie une plage", "Supprime une plage"], a: 0, lvl: "Avancé" },
@@ -241,7 +291,6 @@ const EXAM_DATA = {
     'formules': {
         title: 'Formules de calculs',
         questions: [
-            // ... (Générer 30 questions similaires pour ce module)
             { q: "Quelle est la syntaxe de la fonction SI ?", o: ["=SI(test;vrai;faux)", "=SI(vrai;faux;test)", "=SI(test,vrai,faux)", "=SI(test;faux;vrai)"], a: 0, lvl: "Débutant" },
             { q: "Comment additionner des cellules non contiguës ?", o: ["=SOMME(A1;A3;A5)", "=SOMME(A1:A5)", "=A1+A3+A5", "Les deux premières"], a: 3, lvl: "Intermédiaire" },
             { q: "Que fait la fonction AUJOURDHUI() ?", o: ["Affiche la date du jour", "Affiche l'heure", "Calcule un âge", "Rien"], a: 0, lvl: "Débutant" },
@@ -252,7 +301,6 @@ const EXAM_DATA = {
             { q: "Quelle est la différence entre NB et NBVAL ?", o: ["NB compte les nombres, NBVAL compte tout", "Aucune", "NBVAL compte les nombres", "NB compte les textes"], a: 0, lvl: "Intermédiaire" },
             { q: "Comment faire une recherche avec INDEX et EQUIV ?", o: ["=INDEX(colonne;EQUIV(valeur;colonne;0))", "=INDEX(valeur;colonne)", "=EQUIV(INDEX)", "=INDEX(colonne)"], a: 0, lvl: "Avancé" },
             { q: "Que fait SOMMEPROD ?", o: ["Multiplie et additionne des plages", "Additionne", "Multiplie", "Compte"], a: 0, lvl: "Avancé" },
-            // (Raccourci pour l'exemple, il faut 30 questions réelles)
             { q: "Comment afficher le mois d'une date ?", o: ["MOIS()", "MOIS.DATE()", "MOIS()", "DATE.MOIS()"], a: 0, lvl: "Intermédiaire" },
             { q: "Quelle fonction renvoie la valeur absolue ?", o: ["ABS()", "VAL.ABS()", "VALEUR.ABS()", "POSITIF()"], a: 0, lvl: "Débutant" },
             { q: "Comment utiliser la fonction SIERREUR ?", o: ["=SIERREUR(expression;valeur_si_erreur)", "=SIERREUR(erreur;valeur)", "=SI(ERREUR;valeur)", "=ERREUR()"], a: 0, lvl: "Avancé" },
@@ -278,7 +326,6 @@ const EXAM_DATA = {
     'multifeuilles': {
         title: 'Travail multi-feuilles',
         questions: [
-            // 30 questions pour le multi-feuilles
             { q: "Comment faire référence à une cellule d'une autre feuille ?", o: ["=NomFeuille!A1", "=A1!NomFeuille", "=Feuille(A1)", "=A1.NomFeuille"], a: 0, lvl: "Débutant" },
             { q: "Que fait un groupe de travail ?", o: ["Appliquer des modifications à plusieurs feuilles", "Créer un tableau", "Fusionner des cellules", "Imprimer"], a: 0, lvl: "Intermédiaire" },
             { q: "Comment créer un groupe de feuilles ?", o: ["Ctrl + Clic sur les onglets", "Alt + Clic", "Shift + Clic", "Clic droit"], a: 0, lvl: "Intermédiaire" },
@@ -314,7 +361,6 @@ const EXAM_DATA = {
     'graphiques': {
         title: 'Les graphiques',
         questions: [
-            // 30 questions sur les graphiques
             { q: "Quel graphique montre l'évolution dans le temps ?", o: ["Courbe", "Secteur", "Barres", "Nuage de points"], a: 0, lvl: "Débutant" },
             { q: "Quel graphique montre la répartition en pourcentage ?", o: ["Secteur", "Courbe", "Barres", "Radar"], a: 0, lvl: "Débutant" },
             { q: "Comment ajouter un titre à un graphique ?", o: ["Clic sur + > Titre", "Faire un clic droit", "Insertion > Titre", "Toutes les réponses"], a: 0, lvl: "Débutant" },
@@ -350,7 +396,6 @@ const EXAM_DATA = {
     'tcd': {
         title: 'Bases de données et TCD',
         questions: [
-            // 30 questions sur les TCD
             { q: "Que signifie TCD ?", o: ["Tableau Croisé Dynamique", "Tableau de Calcul Direct", "Tableau de Commande Dynamique", "Type de Calcul de Données"], a: 0, lvl: "Débutant" },
             { q: "Comment créer un TCD ?", o: ["Insertion > Tableau croisé dynamique", "Données > TCD", "Accueil > TCD", "Formules > TCD"], a: 0, lvl: "Débutant" },
             { q: "Quelle est la condition pour créer un TCD ?", o: ["Avoir une base de données propre", "Avoir des formules", "Avoir un graphique", "Avoir un tableau simple"], a: 0, lvl: "Intermédiaire" },
@@ -422,10 +467,8 @@ function selectModule(key) {
 // DÉMARRAGE DE L'EXAMEN
 // ============================================
 function startExam() {
-    // Mélanger ou prendre les 30 questions
     currentQuestions = [...EXAM_DATA[currentModuleKey].questions].slice(0, 30);
     
-    // Si moins de 30 questions, on boucle pour en avoir 30 (pour la démo)
     while(currentQuestions.length < 30) {
         currentQuestions.push(...EXAM_DATA[currentModuleKey].questions);
     }
@@ -435,7 +478,7 @@ function startExam() {
     userAnswers = new Array(currentQuestions.length).fill(null);
     examStarted = true;
     
-    document.getElementById('examModuleTitle').textContent = EXAM_DATA[currentModuleKey].title;
+    document.getElementById('examModuleTitle').innerHTML = `<svg class="icon" style="color: var(--excel-light);"><use href="#icon-chart"></use></svg> ${EXAM_DATA[currentModuleKey].title}`;
     showScreen('screenExam');
     loadQuestion();
 }
@@ -447,7 +490,6 @@ function loadQuestion() {
     if (!examStarted) return;
     const q = currentQuestions[currentIndex];
     
-    // Mise à jour de l'interface
     document.getElementById('questionCounter').textContent = `Question ${currentIndex + 1} / ${currentQuestions.length}`;
     document.getElementById('questionLevel').textContent = q.lvl;
     document.getElementById('questionText').textContent = q.q;
@@ -455,19 +497,17 @@ function loadQuestion() {
     const progress = ((currentIndex) / currentQuestions.length) * 100;
     document.getElementById('progressBar').style.width = `${progress}%`;
 
-    // Boutons de navigation
     document.getElementById('btnPrev').disabled = currentIndex === 0;
     
     const btnNext = document.getElementById('btnNext');
     if (currentIndex === currentQuestions.length - 1) {
-        btnNext.textContent = "🏁 Terminer";
+        btnNext.innerHTML = `Terminer <svg class="icon" style="fill: white;"><use href="#icon-check"></use></svg>`;
         btnNext.className = "btn btn-finish";
     } else {
-        btnNext.textContent = "Suivant ➡️";
+        btnNext.innerHTML = `Suivant <svg class="icon" style="fill: white;"><use href="#icon-arrow-right"></use></svg>`;
         btnNext.className = "btn btn-next";
     }
 
-    // Options
     const optionsList = document.getElementById('optionsList');
     optionsList.innerHTML = '';
     const letters = ['A', 'B', 'C', 'D'];
@@ -519,7 +559,6 @@ function startTimer() {
         updateTimerDisplay();
         if (timeLeft <= 0) {
             stopTimer();
-            // Temps écoulé, on passe automatiquement à la suite
             if (currentIndex < currentQuestions.length - 1) nextQuestion();
             else finishExam();
         }
@@ -532,8 +571,9 @@ function stopTimer() {
 
 function updateTimerDisplay() {
     const box = document.getElementById('timerBox');
-    if (!box) return;
-    box.textContent = `⏱️ ${timeLeft}s`;
+    const txt = document.getElementById('timerText');
+    if (!box || !txt) return;
+    txt.textContent = `${timeLeft}s`;
     if (timeLeft <= 10) box.style.color = '#ef4444';
     else box.style.color = '#f59e0b';
 }
@@ -554,15 +594,13 @@ function finishExam() {
     const scoreCircle = document.getElementById('scoreCircle');
     scoreCircle.textContent = `${score}%`;
     
-    // Couleur du cercle
     if (score >= 80) scoreCircle.style.background = 'linear-gradient(135deg, #10b981, #059669)';
     else if (score >= 50) scoreCircle.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
     else scoreCircle.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
 
     document.getElementById('resultDetails').textContent = `${correct} / ${currentQuestions.length} bonnes réponses`;
-    document.getElementById('resultMessage').textContent = score >= 80 ? "Félicitations ! 🏆" : score >= 50 ? "Peut mieux faire ! 👍" : "Courage, il faut réviser ! 📚";
+    document.getElementById('resultMessage').textContent = score >= 80 ? "Félicitations, Excellent !" : score >= 50 ? "Peut mieux faire !" : "Courage, il faut réviser !";
 
-    // Corrigé détaillé
     const list = document.getElementById('correctionList');
     list.innerHTML = '';
     currentQuestions.forEach((q, i) => {
@@ -575,8 +613,12 @@ function finishExam() {
         const answerText = isAnswered ? q.o[userAnswers[i]] : "Non répondu";
         const correctText = q.o[q.a];
         
+        const iconSvg = isCorrect 
+            ? `<svg class="icon-sm" style="color: #10b981; margin-right: 8px;"><use href="#icon-check"></use></svg>` 
+            : `<svg class="icon-sm" style="color: #ef4444; margin-right: 8px;"><use href="#icon-cross"></use></svg>`;
+        
         div.innerHTML = `
-            <h4>${i + 1}. ${q.q}</h4>
+            <h4>${iconSvg} ${i + 1}. ${q.q}</h4>
             <p><strong>Votre réponse :</strong> ${answerText}</p>
             ${!isCorrect ? `<p><strong>Bonne réponse :</strong> ${correctText}</p>` : ''}
         `;
@@ -592,6 +634,113 @@ function finishExam() {
 function retryExam() {
     showScreen('screenStart');
     document.getElementById('startTitle').textContent = EXAM_DATA[currentModuleKey].title;
+}
+
+// ============================================
+// GÉNÉRATION DU PDF
+// ============================================
+function downloadPDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    
+    // Calcul du score
+    let correct = 0;
+    currentQuestions.forEach((q, i) => {
+        if (userAnswers[i] === q.a) correct++;
+    });
+    const score = Math.round((correct / currentQuestions.length) * 100);
+    const moduleTitle = EXAM_DATA[currentModuleKey].title;
+    
+    // En-tête
+    doc.setFillColor(16, 124, 65); // Vert Excel
+    doc.rect(0, 0, 210, 30, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(22);
+    doc.setFont("helvetica", "bold");
+    doc.text("Rapport d'Évaluation Excel", 105, 20, { align: "center" });
+    
+    // Infos générales
+    doc.setTextColor(50, 50, 50);
+    doc.setFontSize(14);
+    doc.text(`Module : ${moduleTitle}`, 20, 45);
+    
+    const dateStr = new Date().toLocaleDateString('fr-FR', { 
+        year: 'numeric', month: 'long', day: 'numeric', 
+        hour: '2-digit', minute: '2-digit' 
+    });
+    doc.setFontSize(11);
+    doc.setFont("helvetica", "normal");
+    doc.text(`Date de l'examen : ${dateStr}`, 20, 53);
+    
+    // Bloc Score
+    doc.setFontSize(16);
+    doc.setFont("helvetica", "bold");
+    doc.text(`Score obtenu : ${score}% (${correct}/${currentQuestions.length})`, 20, 70);
+    
+    // Ligne de séparation
+    doc.setDrawColor(200, 200, 200);
+    doc.line(20, 75, 190, 75);
+    
+    // Détail des réponses
+    doc.setFontSize(12);
+    doc.text("Détail des réponses :", 20, 85);
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    
+    let y = 95;
+    const pageHeight = doc.internal.pageSize.height;
+    
+    currentQuestions.forEach((q, i) => {
+        // Vérifier si on approche du bas de page
+        if (y > pageHeight - 30) {
+            doc.addPage();
+            y = 20;
+        }
+        
+        const isCorrect = userAnswers[i] === q.a;
+        const isAnswered = userAnswers[i] !== null;
+        const answerText = isAnswered ? q.o[userAnswers[i]] : "Non répondu";
+        const correctText = q.o[q.a];
+        
+        // Couleur selon réussite
+        if (isCorrect) {
+            doc.setTextColor(16, 124, 65); // Vert
+        } else {
+            doc.setTextColor(220, 38, 38); // Rouge
+        }
+        
+        doc.setFont("helvetica", "bold");
+        const questionText = doc.splitTextToSize(`${i + 1}. ${q.q}`, 170);
+        doc.text(questionText, 20, y);
+        y += (questionText.length * 5);
+        
+        doc.setTextColor(80, 80, 80);
+        doc.setFont("helvetica", "normal");
+        const yourAns = doc.splitTextToSize(`Votre réponse : ${answerText}`, 170);
+        doc.text(yourAns, 25, y);
+        y += (yourAns.length * 5);
+        
+        if (!isCorrect) {
+            doc.setTextColor(16, 124, 65); // Vert pour la correction
+            const goodAns = doc.splitTextToSize(`Bonne réponse : ${correctText}`, 170);
+            doc.text(goodAns, 25, y);
+            y += (goodAns.length * 5);
+        }
+        
+        y += 6; // Espace entre les questions
+    });
+    
+    // Pied de page (numéro)
+    const pageCount = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+        doc.setPage(i);
+        doc.setFontSize(8);
+        doc.setTextColor(150, 150, 150);
+        doc.text(`Page ${i} / ${pageCount} - Généré automatiquement`, 105, pageHeight - 10, { align: "center" });
+    }
+
+    // Téléchargement
+    doc.save(`Eval_Excel_${moduleTitle.replace(/\s+/g, '_')}.pdf`);
 }
 
 // Initialisation
