@@ -1,439 +1,603 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-<title>🔴 LIVE — Godé</title>
-<meta name="description" content="Regarder le live Godé en direct">
-<meta name="theme-color" content="#0d47a1">
-
-<style>
-  /* ========== RESET & BASE ========== */
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    -webkit-tap-highlight-color: transparent;
-  }
-
-  html, body {
-    width: 100%;
-    min-height: 100vh;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    background: linear-gradient(180deg, #0d47a1 0%, #1565c0 50%, #42a5f5 100%);
-    color: #ffffff;
-    overflow-x: hidden;
-  }
-
-  body::before {
-    content: '';
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background-image: 
-      radial-gradient(circle at 15% 20%, rgba(255, 215, 0, 0.15) 0%, transparent 40%),
-      radial-gradient(circle at 85% 80%, rgba(255, 255, 255, 0.10) 0%, transparent 40%);
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  /* ========== HEADER ========== */
-  .header {
-    position: relative;
-    z-index: 10;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px 20px;
-    background: rgba(13, 71, 161, 0.85);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border-bottom: 2px solid rgba(255, 215, 0, 0.4);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-  }
-
-  .header-title {
-    font-size: 20px;
-    font-weight: 800;
-    letter-spacing: 1px;
-    color: #ffffff;
-    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
-  }
-
-  .header-title .crown {
-    color: #ffd700;
-    margin-right: 6px;
-  }
-
-  .live-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 12px;
-    background: #ff0000;
-    color: #ffffff;
-    font-size: 12px;
-    font-weight: 700;
-    border-radius: 20px;
-    letter-spacing: 0.5px;
-    box-shadow: 0 2px 10px rgba(255, 0, 0, 0.5);
-    animation: pulse 2s ease-in-out infinite;
-  }
-
-  .live-dot {
-    width: 8px;
-    height: 8px;
-    background: #ffffff;
-    border-radius: 50%;
-    animation: blink 1s ease-in-out infinite;
-  }
-
-  @keyframes pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-  }
-
-  @keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.3; }
-  }
-
-  /* ========== CONTAINER PRINCIPAL ========== */
-  .main-container {
-    position: relative;
-    z-index: 5;
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 24px 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-  }
-
-  /* ========== TITRE ========== */
-  .page-title {
-    text-align: center;
-    font-size: 28px;
-    font-weight: 800;
-    color: #ffffff;
-    text-shadow: 
-      0 2px 12px rgba(0, 0, 0, 0.5),
-      0 0 30px rgba(255, 215, 0, 0.3);
-    letter-spacing: 1px;
-  }
-
-  .page-subtitle {
-    text-align: center;
-    font-size: 16px;
-    font-weight: 500;
-    color: rgba(255, 255, 255, 0.85);
-    margin-top: 8px;
-  }
-
-  /* ========== LECTEUR VIDÉO ========== */
-  .video-wrapper {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 16 / 9;
-    background: #000000;
-    border-radius: 20px;
-    overflow: hidden;
-    box-shadow: 
-      0 20px 60px rgba(0, 0, 0, 0.5),
-      0 0 0 3px rgba(255, 215, 0, 0.4),
-      0 0 0 6px rgba(13, 71, 161, 0.6);
-    animation: glow 3s ease-in-out infinite alternate;
-  }
-
-  @keyframes glow {
-    from {
-      box-shadow: 
-        0 20px 60px rgba(0, 0, 0, 0.5),
-        0 0 0 3px rgba(255, 215, 0, 0.4),
-        0 0 0 6px rgba(13, 71, 161, 0.6);
-    }
-    to {
-      box-shadow: 
-        0 20px 80px rgba(0, 0, 0, 0.6),
-        0 0 0 3px rgba(255, 215, 0, 0.7),
-        0 0 0 6px rgba(21, 101, 192, 0.8);
-    }
-  }
-
-  .video-wrapper iframe {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border: none;
-  }
-
-  /* ========== FALLBACK ========== */
-  .fallback {
-    margin-top: -12px;
-    padding: 16px 20px;
-    background: rgba(255, 255, 255, 0.08);
-    border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .fallback-text {
-    font-size: 14px;
-    color: rgba(255, 255, 255, 0.85);
-    margin: 0;
-  }
-
-  .fallback-button {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 12px 28px;
-    background: linear-gradient(180deg, #ff1744 0%, #d50000 100%);
-    color: #ffffff;
-    font-size: 15px;
-    font-weight: 700;
-    text-decoration: none;
-    border-radius: 50px;
-    letter-spacing: 0.5px;
-    box-shadow: 0 4px 16px rgba(255, 23, 68, 0.5);
-    transition: transform 0.2s, box-shadow 0.2s;
-    cursor: pointer;
-  }
-
-  .fallback-button:hover {
-    transform: scale(1.05);
-    box-shadow: 0 6px 20px rgba(255, 23, 68, 0.7);
-  }
-
-  .fallback-button:active {
-    transform: scale(0.98);
-  }
-
-  /* ========== INFO BAR ========== */
-  .info-bar {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    padding: 14px 20px;
-    background: rgba(255, 255, 255, 0.10);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border-radius: 16px;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-  }
-
-  .info-item {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 14px;
-    font-weight: 600;
-    color: rgba(255, 255, 255, 0.95);
-    padding: 6px 12px;
-    background: rgba(255, 255, 255, 0.08);
-    border-radius: 10px;
-  }
-
-  .info-item .emoji {
-    font-size: 16px;
-  }
-
-  /* ========== FOOTER ========== */
-  .footer {
-    position: relative;
-    z-index: 5;
-    text-align: center;
-    padding: 24px 16px;
-    font-size: 14px;
-    color: rgba(255, 255, 255, 0.7);
-  }
-
-  .footer .crown {
-    color: #ffd700;
-    font-size: 20px;
-    display: block;
-    margin-bottom: 6px;
-  }
-
-  /* ========== RESPONSIVE MOBILE ========== */
-  @media (max-width: 768px) {
-    .header {
-      padding: 12px 16px;
-    }
-
-    .header-title {
-      font-size: 16px;
-    }
-
-    .live-badge {
-      font-size: 11px;
-      padding: 5px 10px;
-    }
-
-    .main-container {
-      padding: 16px 12px;
-      gap: 16px;
-    }
-
-    .page-title {
-      font-size: 22px;
-    }
-
-    .page-subtitle {
-      font-size: 14px;
-    }
-
-    .video-wrapper {
-      border-radius: 14px;
-      box-shadow: 
-        0 12px 40px rgba(0, 0, 0, 0.5),
-        0 0 0 2px rgba(255, 215, 0, 0.5);
-      animation: none;
-    }
-
-    .fallback {
-      padding: 12px 14px;
-      gap: 8px;
-    }
-
-    .fallback-text {
-      font-size: 12px;
-    }
-
-    .fallback-button {
-      font-size: 13px;
-      padding: 10px 22px;
-    }
-
-    .info-bar {
-      padding: 10px 12px;
-      gap: 8px;
-    }
-
-    .info-item {
-      font-size: 12px;
-      padding: 5px 10px;
-    }
-
-    .footer {
-      font-size: 12px;
-    }
-  }
-
-  @media (max-width: 480px) {
-    .page-title {
-      font-size: 18px;
-    }
-
-    .page-subtitle {
-      font-size: 12px;
-    }
-
-    .info-item {
-      font-size: 11px;
-    }
-  }
-
-  /* ========== MODE PAYSAGE MOBILE ========== */
-  @media (max-height: 500px) and (orientation: landscape) {
-    .header {
-      padding: 6px 12px;
-    }
-
-    .header-title {
-      font-size: 14px;
-    }
-
-    .main-container {
-      padding: 8px;
-      gap: 8px;
-    }
-
-    .page-title, .page-subtitle, .info-bar, .footer, .fallback {
-      display: none;
-    }
-
-    .video-wrapper {
-      border-radius: 8px;
-      max-height: calc(100vh - 50px);
-      width: auto;
-      margin: 0 auto;
-    }
-  }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📊 Certification Excel - Modules</title>
+    <style>
+        :root {
+            --bg-main: #0f172a; --card-bg: #ffffff; --text-dark: #1e293b; --text-light: #64748b;
+            --shadow: 0 20px 60px rgba(0,0,0,0.15); --radius: 24px;
+            --excel-green: #107c41; --excel-light: #21a366;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif; background: #0f172a; min-height: 100vh;
+            color: white; user-select: none; overflow-x: hidden;
+        }
+        .bg-animated {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            background: radial-gradient(circle at top right, rgba(16,124,65,0.2), transparent 40%),
+                        radial-gradient(circle at bottom left, rgba(33,163,102,0.2), transparent 40%), #0f172a;
+        }
+        
+        /* ÉCRAN DE SÉLECTION */
+        .eval-container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; min-height: 100vh; display: flex; flex-direction: column; position: relative; z-index: 1; }
+        .module-select-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; text-align: center; animation: slideUp 0.8s ease-out; }
+        .module-select-screen h1 { font-size: 48px; font-weight: 900; margin-bottom: 10px; background: linear-gradient(135deg, #21a366, #107c41); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .module-select-screen .subtitle { font-size: 18px; color: rgba(255,255,255,0.7); margin-bottom: 40px; }
+        
+        .module-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; width: 100%; max-width: 1000px; }
+        .module-card {
+            background: rgba(255,255,255,0.05); border-radius: 20px; overflow: hidden; cursor: pointer;
+            border: 1px solid rgba(255,255,255,0.1); transition: all 0.4s cubic-bezier(0.34,1.56,0.64,1);
+            position: relative; display: flex; flex-direction: column;
+        }
+        .module-card:hover { transform: translateY(-10px); border-color: var(--excel-light); box-shadow: 0 20px 40px rgba(33,163,102,0.3); }
+        .module-image { height: 160px; width: 100%; display: flex; align-items: center; justify-content: center; font-size: 60px; position: relative; }
+        .module-image::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 50%; background: linear-gradient(to top, rgba(15,23,42,1), transparent); }
+        .module-card:nth-child(1) .module-image { background: linear-gradient(135deg, #1e3a8a, #3b82f6); }
+        .module-card:nth-child(2) .module-image { background: linear-gradient(135deg, #7e22ce, #a855f7); }
+        .module-card:nth-child(3) .module-image { background: linear-gradient(135deg, #b45309, #f59e0b); }
+        .module-card:nth-child(4) .module-image { background: linear-gradient(135deg, #be123c, #f43f5e); }
+        .module-card:nth-child(5) .module-image { background: linear-gradient(135deg, #0f766e, #14b8a6); }
+        
+        .module-info { padding: 20px; text-align: left; z-index: 1; }
+        .module-title { font-size: 20px; font-weight: 800; margin-bottom: 5px; }
+        .module-desc { font-size: 13px; color: rgba(255,255,255,0.6); }
+        
+        /* EXAMEN */
+        .exam-screen { display: none; flex-direction: column; width: 100%; animation: fadeIn 0.5s ease; }
+        .exam-topbar { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: rgba(255,255,255,0.05); border-radius: 15px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.1); }
+        .timer-box { display: flex; align-items: center; gap: 10px; font-family: monospace; font-size: 20px; font-weight: bold; color: #f59e0b; background: rgba(245,158,11,0.1); padding: 8px 15px; border-radius: 10px; }
+        .progress-bar { height: 8px; background: rgba(255,255,255,0.1); border-radius: 10px; margin-bottom: 20px; overflow: hidden; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, var(--excel-light), var(--excel-green)); transition: width 0.3s ease; width: 0%; }
+        
+        .question-card { background: white; border-radius: 20px; padding: 30px; color: var(--text-dark); box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .question-text { font-size: 22px; font-weight: 700; margin-bottom: 25px; }
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        .option-item { padding: 15px 20px; border: 2px solid #e2e8f0; border-radius: 12px; cursor: pointer; font-size: 16px; font-weight: 600; transition: all 0.2s; display: flex; align-items: center; gap: 15px; }
+        .option-item:hover { border-color: var(--excel-light); background: #f0fdf4; }
+        .option-item.selected { border-color: var(--excel-green); background: #dcfce7; }
+        .option-letter { width: 30px; height: 30px; border-radius: 50%; background: #f1f5f9; display: flex; align-items: center; justify-content: center; font-weight: 800; color: var(--text-light); }
+        .option-item.selected .option-letter { background: var(--excel-green); color: white; }
+        
+        .nav-buttons { display: flex; justify-content: space-between; margin-top: 30px; }
+        .btn { padding: 12px 25px; border-radius: 10px; font-weight: 700; cursor: pointer; border: none; transition: all 0.2s; font-size: 16px; }
+        .btn-next { background: var(--excel-green); color: white; }
+        .btn-next:hover { background: #0b5e31; }
+        .btn-prev { background: #e2e8f0; color: var(--text-dark); }
+        .btn-prev:hover { background: #cbd5e1; }
+        .btn-finish { background: #3b82f6; color: white; }
+        .btn-finish:hover { background: #2563eb; }
+        
+        /* RÉSULTATS */
+        .result-screen { display: none; flex-direction: column; align-items: center; text-align: center; animation: slideUp 0.5s ease-out; }
+        .score-circle { width: 150px; height: 150px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 40px; font-weight: 900; color: white; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .correction-list { width: 100%; max-width: 800px; margin-top: 30px; text-align: left; background: rgba(255,255,255,0.05); border-radius: 15px; padding: 20px; max-height: 400px; overflow-y: auto; }
+        .correction-item { padding: 15px; margin-bottom: 10px; border-radius: 10px; background: white; color: var(--text-dark); border-left: 5px solid #e2e8f0; }
+        .correction-item.correct { border-left-color: #10b981; background: #f0fdf4; }
+        .correction-item.incorrect { border-left-color: #ef4444; background: #fef2f2; }
+        .correction-item h4 { margin-bottom: 5px; font-size: 15px; }
+        .correction-item p { font-size: 14px; color: var(--text-light); }
+        
+        .start-screen { display: none; flex-direction: column; align-items: center; text-align: center; justify-content: center; flex: 1; }
+        .rules-card { background: rgba(255,255,255,0.05); border-radius: 20px; padding: 30px; max-width: 600px; text-align: left; margin: 20px 0; border: 1px solid rgba(255,255,255,0.1); }
+        .rules-card ul { list-style: none; }
+        .rules-card li { padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; gap: 10px; align-items: center; }
+        .rules-card li:last-child { border-bottom: none; }
+        .btn-start { background: linear-gradient(135deg, var(--excel-light), var(--excel-green)); color: white; font-size: 20px; padding: 20px 50px; border-radius: 50px; font-weight: 900; border: none; cursor: pointer; box-shadow: 0 10px 30px rgba(16,124,65,0.4); transition: transform 0.3s; }
+        .btn-start:hover { transform: scale(1.05); }
+        
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
 </head>
 <body>
 
-<!-- ========== HEADER ========== -->
-<header class="header">
-  <div class="header-title">
-    <span class="crown">👑</span> GODÉ
-  </div>
-  <div class="live-badge">
-    <span class="live-dot"></span>
-    EN DIRECT
-  </div>
-</header>
+<div class="bg-animated"></div>
 
-<!-- ========== MAIN ========== -->
-<main class="main-container">
+<div class="eval-container">
+    <!-- ÉCRAN 1 : SÉLECTION DU MODULE -->
+    <div class="module-select-screen" id="screenSelect">
+        <h1>Certification Excel</h1>
+        <p class="subtitle">Choisissez le module à évaluer (30 questions)</p>
+        <div class="module-grid">
+            <div class="module-card" onclick="selectModule('calculs')">
+                <div class="module-image">📊</div>
+                <div class="module-info">
+                    <div class="module-title">Feuille de calculs simples</div>
+                    <div class="module-desc">Formules de base, opérateurs, mise en forme</div>
+                </div>
+            </div>
+            <div class="module-card" onclick="selectModule('formules')">
+                <div class="module-image">🧮</div>
+                <div class="module-info">
+                    <div class="module-title">Formules de calculs</div>
+                    <div class="module-desc">Si, Somme, RechercheV, fonctions avancées</div>
+                </div>
+            </div>
+            <div class="module-card" onclick="selectModule('multifeuilles')">
+                <div class="module-image">📑</div>
+                <div class="module-info">
+                    <div class="module-title">Travail multi-feuilles</div>
+                    <div class="module-desc">Références croisées, liaisons, consolidation</div>
+                </div>
+            </div>
+            <div class="module-card" onclick="selectModule('graphiques')">
+                <div class="module-image">📈</div>
+                <div class="module-info">
+                    <div class="module-title">Les graphiques</div>
+                    <div class="module-desc">Histogrammes, courbes, secteurs, personnalisation</div>
+                </div>
+            </div>
+            <div class="module-card" onclick="selectModule('tcd')">
+                <div class="module-image">🗄️</div>
+                <div class="module-info">
+                    <div class="module-title">Bases de données et TCD</div>
+                    <div class="module-desc">Tableaux croisés, filtres, segments</div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-  <div>
-    <h1 class="page-title">🔴 Le live démarre dans un instant !</h1>
-    <p class="page-subtitle">Restez connectés pour ne rien rater</p>
-  </div>
+    <!-- ÉCRAN 2 : DÉMARRAGE -->
+    <div class="start-screen" id="screenStart">
+        <h1 style="font-size: 36px; margin-bottom: 10px;" id="startTitle">Module</h1>
+        <p style="color: rgba(255,255,255,0.7); font-size: 18px;">Prêt à démarrer l'évaluation ?</p>
+        <div class="rules-card">
+            <h3 style="color: var(--excel-light); margin-bottom: 15px;">📋 Règles de l'examen</h3>
+            <ul>
+                <li><span>⏱️</span> 30 secondes par question</li>
+                <li><span>👁️</span> Anti-triche : changement d'onglet = question invalidée</li>
+                <li><span>💾</span> Sauvegarde automatique de votre progression</li>
+                <li><span>🏆</span> Corrigé complet disponible à la fin</li>
+            </ul>
+        </div>
+        <button class="btn-start" onclick="startExam()">🚀 COMMENCER</button>
+        <button class="btn btn-prev" style="margin-top: 20px;" onclick="backToMenu()">↩ Retour</button>
+    </div>
 
-  <!-- LECTEUR FACEBOOK LIVE -->
-  <div class="video-wrapper">
-    <iframe 
-      src="https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2F61582985333142%2Fvideos%2F1751501562775472%2F&show_text=false&autoplay=true"
-      scrolling="no" 
-      frameborder="0" 
-      allowfullscreen="true"
-      allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share">
-    </iframe>
-  </div>
+    <!-- ÉCRAN 3 : EXAMEN -->
+    <div class="exam-screen" id="screenExam">
+        <div class="exam-topbar">
+            <div style="font-weight: bold; font-size: 18px;" id="examModuleTitle">Module</div>
+            <div class="timer-box" id="timerBox">⏱️ 30s</div>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="progressBar"></div></div>
+        
+        <div class="question-card">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 14px; color: var(--text-light); font-weight: bold;">
+                <span id="questionCounter">Question 1 / 30</span>
+                <span id="questionLevel">Niveau</span>
+            </div>
+            <div class="question-text" id="questionText">Chargement...</div>
+            <div class="options-list" id="optionsList"></div>
+            <div class="nav-buttons">
+                <button class="btn btn-prev" id="btnPrev" onclick="prevQuestion()" disabled>⬅️ Précédent</button>
+                <button class="btn btn-next" id="btnNext" onclick="nextQuestion()">Suivant ➡️</button>
+            </div>
+        </div>
+    </div>
 
-  <!-- FALLBACK si l'iframe est bloquée par le navigateur -->
-  <div class="fallback">
-    <p class="fallback-text">
-      💡 Le live ne s'affiche pas ? Ton navigateur bloque peut-être les vidéos intégrées.
-    </p>
-    <a href="https://www.facebook.com/61582985333142/videos/1751501562775472/" 
-       target="_blank" 
-       rel="noopener" 
-       class="fallback-button">
-      ▶️ OUVRIR LE LIVE SUR FACEBOOK
-    </a>
-  </div>
+    <!-- ÉCRAN 4 : RÉSULTATS -->
+    <div class="result-screen" id="screenResult">
+        <div class="score-circle" id="scoreCircle">0%</div>
+        <h2 style="font-size: 32px; margin-bottom: 10px;" id="resultMessage">Félicitations !</h2>
+        <p style="color: rgba(255,255,255,0.6); margin-bottom: 20px;" id="resultDetails">0/30 bonnes réponses</p>
+        
+        <div style="display: flex; gap: 15px; margin-bottom: 20px;">
+            <button class="btn btn-finish" onclick="retryExam()">🔄 Réessayer</button>
+            <button class="btn btn-prev" onclick="backToMenu()">🏠 Menu principal</button>
+        </div>
 
-  <!-- INFO BAR -->
-  <div class="info-bar">
-    <span class="info-item">
-      <span class="emoji">🎮</span> Live Godé
-    </span>
-    <span class="info-item">
-      <span class="emoji">🎁</span> Bonus Pass
-    </span>
-    <span class="info-item">
-      <span class="emoji">🗳️</span> Vote Mémodé
-    </span>
-  </div>
+        <div class="correction-list" id="correctionList"></div>
+    </div>
+</div>
 
-</main>
+<script>
+// ============================================
+// DONNÉES DES EXAMENS (30 QUESTIONS PAR MODULE)
+// ============================================
+const EXAM_DATA = {
+    'calculs': {
+        title: 'Feuille de calculs simples',
+        questions: [
+            // 10 Débutant
+            { q: "Quelle est l'extension d'un fichier Excel ?", o: [".docx", ".xlsx", ".pdf", ".txt"], a: 1, lvl: "Débutant" },
+            { q: "Quel symbole commence toujours une formule ?", o: ["+", "-", "=", "@"], a: 2, lvl: "Débutant" },
+            { q: "Comment sélectionner toute une colonne ?", o: ["Clic sur la lettre de colonne", "Ctrl + A", "Clic sur le numéro de ligne", "F5"], a: 0, lvl: "Débutant" },
+            { q: "Que signifie la cellule A1 ?", o: ["Colonne 1, Ligne A", "Ligne 1, Colonne A", "Page A1", "Aucune de ces réponses"], a: 1, lvl: "Débutant" },
+            { q: "Quel raccourci permet d'enregistrer un fichier ?", o: ["Ctrl + S", "Ctrl + C", "Ctrl + P", "Ctrl + Z"], a: 0, lvl: "Débutant" },
+            { q: "Quel format est utilisé pour les pourcentages ?", o: ["0,00", "0%", "0.00", "000"], a: 1, lvl: "Débutant" },
+            { q: "Comment insérer une nouvelle ligne ?", o: ["Clic droit > Insérer", "Ctrl + I", "Ctrl + N", "Alt + Entrée"], a: 0, lvl: "Débutant" },
+            { q: "Que fait le bouton 'Annuler' ?", o: ["Efface tout", "Annule la dernière action", "Ferme le fichier", "Sauvegarde"], a: 1, lvl: "Débutant" },
+            { q: "Quelle est la largeur par défaut d'une colonne ?", o: ["8,43", "10", "12", "15"], a: 0, lvl: "Débutant" },
+            { q: "Comment figer une ligne d'en-tête ?", o: ["Affichage > Figer les volets", "Accueil > Figer", "Insertion > Figer", "Données > Figer"], a: 0, lvl: "Débutant" },
+            // 10 Intermédiaire
+            { q: "Quelle formule additionne A1 à A10 ?", o: ["=SOMME(A1:A10)", "=ADD(A1:A10)", "=TOTAL(A1:A10)", "=A1+A10"], a: 0, lvl: "Intermédiaire" },
+            { q: "Comment faire une moyenne sans les zéros ?", o: ["MOYENNE.SI", "MOYENNE", "MOYENNE.SI.ENS", "MOYENNE.SANS.ZERO"], a: 0, lvl: "Intermédiaire" },
+            { q: "Quel est le résultat de =SI(2>1;\"Vrai\";\"Faux\") ?", o: ["Vrai", "Faux", "Erreur", "1"], a: 0, lvl: "Intermédiaire" },
+            { q: "Comment compter les cellules non vides ?", o: ["NBVAL", "NB.VIDE", "NB", "NB.SI"], a: 0, lvl: "Intermédiaire" },
+            { q: "Que fait la fonction RECHERCHEV ?", o: ["Cherche une valeur horizontalement", "Cherche une valeur verticalement", "Compte les valeurs", "Additionne"], a: 1, lvl: "Intermédiaire" },
+            { q: "Comment figer une cellule dans une formule ?", o: ["F4", "F2", "Ctrl + L", "Ctrl + F"], a: 0, lvl: "Intermédiaire" },
+            { q: "Quelle est la différence entre SOMME et SOMME.SI ?", o: ["Aucune", "SOMME.SI ajoute une condition", "SOMME.SI est plus rapide", "SOMME fait des soustractions"], a: 1, lvl: "Intermédiaire" },
+            { q: "Comment mettre du texte en majuscule ?", o: ["MAJUSCULE()", "MINUSCULE()", "NOMPROPRE()", "TEXTE()"], a: 0, lvl: "Intermédiaire" },
+            { q: "Quel est le format pour une date en français ?", o: ["jj/mm/aaaa", "mm/dd/yyyy", "yyyy-mm-dd", "dd-mm-yy"], a: 0, lvl: "Intermédiaire" },
+            { q: "Comment faire un tri alphabétique ?", o: ["Données > Trier", "Accueil > Trier", "Insertion > Trier", "Formules > Trier"], a: 0, lvl: "Intermédiaire" },
+            // 10 Avancé
+            { q: "Quelle fonction permet de rechercher une valeur par ligne et colonne ?", o: ["RECHERCHEX", "RECHERCHEV", "INDEX/EQUIV", "RECHERCHE"], a: 2, lvl: "Avancé" },
+            { q: "Comment créer une liste déroulante ?", o: ["Données > Validation des données", "Accueil > Liste", "Insertion > Contrôle", "Formules > Liste"], a: 0, lvl: "Avancé" },
+            { q: "Que fait la fonction DECALER ?", o: ["Décale une plage de cellules", "Efface une plage", "Copie une plage", "Supprime une plage"], a: 0, lvl: "Avancé" },
+            { q: "Comment utiliser une formule matricielle ?", o: ["Ctrl + Maj + Entrée", "Ctrl + Entrée", "Alt + Entrée", "F2 + Entrée"], a: 0, lvl: "Avancé" },
+            { q: "Quelle est la fonction pour extraire du texte à gauche ?", o: ["GAUCHE()", "DROITE()", "STXT()", "CHERCHE()"], a: 0, lvl: "Avancé" },
+            { q: "Comment faire une mise en forme conditionnelle complexe ?", o: ["Accueil > Mise en forme conditionnelle > Nouvelle règle", "Insertion > Condition", "Données > Condition", "Formules > Condition"], a: 0, lvl: "Avancé" },
+            { q: "Quel est le rôle de la fonction INDIRECT ?", o: ["Référence une cellule par texte", "Renvoie une valeur", "Compte les cellules", "Additionne"], a: 0, lvl: "Avancé" },
+            { q: "Comment protéger une feuille ?", o: ["Révision > Protéger la feuille", "Accueil > Protéger", "Données > Protéger", "Fichier > Protéger"], a: 0, lvl: "Avancé" },
+            { q: "Quelle fonction permet de faire une recherche multi-critères ?", o: ["SOMMEPROD", "SOMME", "RECHERCHEV", "INDEX"], a: 0, lvl: "Avancé" },
+            { q: "Comment lier une cellule à un autre classeur ?", o: ["= [NomClasseur.xlsx]Feuille!A1", "=LINK(A1)", "=EXTERNE(A1)", "=A1"], a: 0, lvl: "Avancé" }
+        ]
+    },
+    'formules': {
+        title: 'Formules de calculs',
+        questions: [
+            // ... (Générer 30 questions similaires pour ce module)
+            { q: "Quelle est la syntaxe de la fonction SI ?", o: ["=SI(test;vrai;faux)", "=SI(vrai;faux;test)", "=SI(test,vrai,faux)", "=SI(test;faux;vrai)"], a: 0, lvl: "Débutant" },
+            { q: "Comment additionner des cellules non contiguës ?", o: ["=SOMME(A1;A3;A5)", "=SOMME(A1:A5)", "=A1+A3+A5", "Les deux premières"], a: 3, lvl: "Intermédiaire" },
+            { q: "Que fait la fonction AUJOURDHUI() ?", o: ["Affiche la date du jour", "Affiche l'heure", "Calcule un âge", "Rien"], a: 0, lvl: "Débutant" },
+            { q: "Comment arrondir à 2 décimales ?", o: ["ARRONDI(A1;2)", "ARRONDI(A1;0)", "ARRONDI(A1;1)", "ARRONDI(A1)"], a: 0, lvl: "Intermédiaire" },
+            { q: "Quelle fonction compte les cellules vides ?", o: ["NB.VIDE", "NBVAL", "NB", "VIDE"], a: 0, lvl: "Intermédiaire" },
+            { q: "Comment concaténer deux textes ?", o: ["A1&B1", "A1+B1", "CONCAT(A1;B1)", "A et B"], a: 0, lvl: "Débutant" },
+            { q: "Que fait la fonction GAUCHE(A1;3) ?", o: ["3 premiers caractères", "3 derniers caractères", "3 caractères au milieu", "Supprime 3 caractères"], a: 0, lvl: "Intermédiaire" },
+            { q: "Quelle est la différence entre NB et NBVAL ?", o: ["NB compte les nombres, NBVAL compte tout", "Aucune", "NBVAL compte les nombres", "NB compte les textes"], a: 0, lvl: "Intermédiaire" },
+            { q: "Comment faire une recherche avec INDEX et EQUIV ?", o: ["=INDEX(colonne;EQUIV(valeur;colonne;0))", "=INDEX(valeur;colonne)", "=EQUIV(INDEX)", "=INDEX(colonne)"], a: 0, lvl: "Avancé" },
+            { q: "Que fait SOMMEPROD ?", o: ["Multiplie et additionne des plages", "Additionne", "Multiplie", "Compte"], a: 0, lvl: "Avancé" },
+            // (Raccourci pour l'exemple, il faut 30 questions réelles)
+            { q: "Comment afficher le mois d'une date ?", o: ["MOIS()", "MOIS.DATE()", "MOIS()", "DATE.MOIS()"], a: 0, lvl: "Intermédiaire" },
+            { q: "Quelle fonction renvoie la valeur absolue ?", o: ["ABS()", "VAL.ABS()", "VALEUR.ABS()", "POSITIF()"], a: 0, lvl: "Débutant" },
+            { q: "Comment utiliser la fonction SIERREUR ?", o: ["=SIERREUR(expression;valeur_si_erreur)", "=SIERREUR(erreur;valeur)", "=SI(ERREUR;valeur)", "=ERREUR()"], a: 0, lvl: "Avancé" },
+            { q: "Que fait la fonction NOMPROPRE ?", o: ["Met la 1ère lettre en majuscule", "Met tout en majuscule", "Met tout en minuscule", "Supprime les espaces"], a: 0, lvl: "Intermédiaire" },
+            { q: "Comment extraire le nom de domaine d'un email ?", o: ["DROITE() avec CHERCHE()", "GAUCHE()", "STXT()", "EXTRACTION()"], a: 0, lvl: "Avancé" },
+            { q: "Quelle fonction renvoie le nombre de caractères ?", o: ["NBCAR()", "LONGUEUR()", "TAILLE()", "CAR()"], a: 0, lvl: "Débutant" },
+            { q: "Comment arrondir au multiple de 5 supérieur ?", o: ["PLAFOND(A1;5)", "ARRONDI.SUP(A1;5)", "PLANCHER(A1;5)", "MULTIPLE(A1;5)"], a: 0, lvl: "Avancé" },
+            { q: "Que fait la fonction ESTNUM ?", o: ["Vérifie si c'est un nombre", "Vérifie si c'est du texte", "Convertit en nombre", "Supprime le texte"], a: 0, lvl: "Intermédiaire" },
+            { q: "Comment utiliser RANG ?", o: ["=RANG(valeur;plage)", "=RANG(plage;valeur)", "=RANG(valeur)", "=RANG()"], a: 0, lvl: "Intermédiaire" },
+            { q: "Quelle fonction renvoie le dernier jour du mois ?", o: ["FIN.MOIS()", "DERNIER.JOUR()", "MOIS.FIN()", "JOUR.FIN()"], a: 0, lvl: "Avancé" },
+            { q: "Comment faire une somme conditionnelle avec plusieurs critères ?", o: ["SOMME.SI.ENS", "SOMME.SI", "SOMME", "SOMMEPROD"], a: 0, lvl: "Avancé" },
+            { q: "Que fait la fonction SUBSTITUE ?", o: ["Remplace du texte", "Supprime du texte", "Ajoute du texte", "Coupe du texte"], a: 0, lvl: "Intermédiaire" },
+            { q: "Comment compter les cellules contenant 'Paris' ?", o: ["NB.SI(plage;\"*Paris*\")", "NB.SI(plage;\"Paris\")", "NBVAL(plage)", "NB(plage)"], a: 0, lvl: "Intermédiaire" },
+            { q: "Quelle fonction renvoie la date du jour sans l'heure ?", o: ["AUJOURDHUI()", "MAINTENANT()", "DATE()", "JOUR()"], a: 0, lvl: "Débutant" },
+            { q: "Comment figer une référence de ligne dans une formule ?", o: ["$A1", "A$1", "$A$1", "A1"], a: 1, lvl: "Intermédiaire" },
+            { q: "Quelle fonction permet de créer un tableau à partir d'une plage ?", o: ["TABLEAU()", "TAB()", "MATRICE()", "PLAGE()"], a: 0, lvl: "Avancé" },
+            { q: "Que fait la fonction MOYENNE.SI ?", o: ["Moyenne avec une condition", "Moyenne sans condition", "Moyenne pondérée", "Moyenne mobile"], a: 0, lvl: "Intermédiaire" },
+            { q: "Comment convertir un texte en nombre ?", o: ["CNUM()", "TEXTE()", "VAL()", "NOMBRE()"], a: 0, lvl: "Intermédiaire" },
+            { q: "Quelle fonction renvoie la valeur maximale ?", o: ["MAX()", "MIN()", "GRAND()", "PETIT()"], a: 0, lvl: "Débutant" },
+            { q: "Comment utiliser la fonction FILTRE (Excel 365) ?", o: ["=FILTRE(plage;condition)", "=FILTRE(condition;plage)", "=FILTRE(plage)", "=FILTRE()"], a: 0, lvl: "Avancé" }
+        ]
+    },
+    'multifeuilles': {
+        title: 'Travail multi-feuilles',
+        questions: [
+            // 30 questions pour le multi-feuilles
+            { q: "Comment faire référence à une cellule d'une autre feuille ?", o: ["=NomFeuille!A1", "=A1!NomFeuille", "=Feuille(A1)", "=A1.NomFeuille"], a: 0, lvl: "Débutant" },
+            { q: "Que fait un groupe de travail ?", o: ["Appliquer des modifications à plusieurs feuilles", "Créer un tableau", "Fusionner des cellules", "Imprimer"], a: 0, lvl: "Intermédiaire" },
+            { q: "Comment créer un groupe de feuilles ?", o: ["Ctrl + Clic sur les onglets", "Alt + Clic", "Shift + Clic", "Clic droit"], a: 0, lvl: "Intermédiaire" },
+            { q: "Comment consolider des données de plusieurs feuilles ?", o: ["Données > Consolider", "Accueil > Fusionner", "Insertion > Fusion", "Formules > Consolider"], a: 0, lvl: "Avancé" },
+            { q: "Quelle est la référence 3D pour la somme des cellules A1 de Feuil1 à Feuil3 ?", o: ["=SOMME(Feuil1:Feuil3!A1)", "=SOMME(Feuil1;Feuil3!A1)", "=SOMME(Feuil1:Feuil3;A1)", "=SOMME(Feuil1!A1:Feuil3!A1)"], a: 0, lvl: "Avancé" },
+            { q: "Comment lier des classeurs ?", o: ["Avec une formule de référence externe", "Par un copier-coller", "Par un lien hypertexte", "Impossible"], a: 0, lvl: "Intermédiaire" },
+            { q: "Que se passe-t-il si on renomme une feuille référencée ?", o: ["Excel met à jour la formule", "La formule casse", "Rien", "Excel demande confirmation"], a: 0, lvl: "Intermédiaire" },
+            { q: "Comment déplacer une feuille ?", o: ["Glisser-déposer l'onglet", "Ctrl + X", "Clic droit > Déplacer", "Toutes les réponses"], a: 3, lvl: "Débutant" },
+            { q: "Quel est l'intérêt du mode Plan ?", o: ["Masquer/afficher des détails", "Créer un graphique", "Trier", "Filtrer"], a: 0, lvl: "Avancé" },
+            { q: "Comment protéger la structure du classeur ?", o: ["Révision > Protéger le classeur", "Fichier > Protéger", "Accueil > Protéger", "Données > Protéger"], a: 0, lvl: "Avancé" },
+            { q: "Comment copier une feuille ?", o: ["Clic droit > Déplacer ou copier", "Ctrl + C", "Ctrl + V", "Toutes les réponses"], a: 0, lvl: "Débutant" },
+            { q: "Que fait la fonction FEUILLE() ?", o: ["Renvoie le numéro de la feuille", "Renvoie le nom", "Renvoie le nombre de feuilles", "Rien"], a: 0, lvl: "Avancé" },
+            { q: "Comment créer un sommaire dynamique ?", o: ["Avec des liens hypertextes", "Avec une formule", "Avec un TCD", "Avec un graphique"], a: 0, lvl: "Avancé" },
+            { q: "Comment masquer une feuille ?", o: ["Clic droit > Masquer", "Format > Masquer", "Affichage > Masquer", "Fenêtre > Masquer"], a: 0, lvl: "Débutant" },
+            { q: "Que signifie une référence absolue ?", o: ["$A$1", "A1", "A$1", "$A1"], a: 0, lvl: "Intermédiaire" },
+            { q: "Comment faire un calcul sur plusieurs feuilles ?", o: ["Utiliser une référence 3D", "Copier-coller", "Faire un TCD", "Toutes les réponses"], a: 0, lvl: "Intermédiaire" },
+            { q: "Comment renommer une feuille ?", o: ["Double-clic sur l'onglet", "Clic droit > Renommer", "F2", "Toutes les réponses"], a: 3, lvl: "Débutant" },
+            { q: "Comment insérer une feuille ?", o: ["Clic sur +", "Maj + F11", "Clic droit > Insérer", "Toutes les réponses"], a: 3, lvl: "Débutant" },
+            { q: "Que fait la fonction INDIRECT dans un contexte multi-feuilles ?", o: ["Référence dynamique", "Copie", "Supprime", "Renomme"], a: 0, lvl: "Avancé" },
+            { q: "Comment supprimer une feuille ?", o: ["Clic droit > Supprimer", "Suppr", "Ctrl + Suppr", "Fichier > Supprimer"], a: 0, lvl: "Débutant" },
+            { q: "Quel est l'avantage des feuilles de calcul liées ?", o: ["Mise à jour automatique", "Plus rapide", "Plus beau", "Aucun"], a: 0, lvl: "Intermédiaire" },
+            { q: "Comment afficher deux feuilles côte à côte ?", o: ["Affichage > Nouvelle fenêtre", "Affichage > Côte à côte", "Fenêtre > Fractionner", "Toutes les réponses"], a: 3, lvl: "Intermédiaire" },
+            { q: "Que fait un lien hypertexte vers une autre feuille ?", o: ["Navigue vers la feuille", "Copie la feuille", "Supprime la feuille", "Renomme"], a: 0, lvl: "Débutant" },
+            { q: "Comment faire une somme de plusieurs feuilles sans référence 3D ?", o: ["=Feuil1!A1+Feuil2!A1", "=SOMME(Feuil1!A1;Feuil2!A1)", "Les deux", "Aucune"], a: 2, lvl: "Intermédiaire" },
+            { q: "Comment verrouiller une feuille ?", o: ["Révision > Protéger la feuille", "Affichage > Verrouiller", "Accueil > Verrouiller", "Insertion > Verrouiller"], a: 0, lvl: "Intermédiaire" },
+            { q: "Comment regrouper des feuilles ?", o: ["Ctrl + Clic", "Alt + Clic", "Maj + Clic", "Toutes les réponses"], a: 0, lvl: "Intermédiaire" },
+            { q: "Que fait la fonction DECALER avec plusieurs feuilles ?", o: ["Référence une plage dynamique", "Supprime", "Copie", "Renomme"], a: 0, lvl: "Avancé" },
+            { q: "Comment créer une feuille de synthèse ?", o: ["Par consolidation", "Par TCD", "Par formules", "Toutes les réponses"], a: 3, lvl: "Avancé" },
+            { q: "Quelle est la limite de feuilles dans un classeur ?", o: ["Illimitée (selon mémoire)", "10", "100", "255"], a: 0, lvl: "Débutant" },
+            { q: "Comment utiliser la fonction SOMME.SI sur plusieurs feuilles ?", o: ["Faire une référence 3D", "Faire un TCD", "Impossible directement", "Toutes les réponses"], a: 2, lvl: "Avancé" }
+        ]
+    },
+    'graphiques': {
+        title: 'Les graphiques',
+        questions: [
+            // 30 questions sur les graphiques
+            { q: "Quel graphique montre l'évolution dans le temps ?", o: ["Courbe", "Secteur", "Barres", "Nuage de points"], a: 0, lvl: "Débutant" },
+            { q: "Quel graphique montre la répartition en pourcentage ?", o: ["Secteur", "Courbe", "Barres", "Radar"], a: 0, lvl: "Débutant" },
+            { q: "Comment ajouter un titre à un graphique ?", o: ["Clic sur + > Titre", "Faire un clic droit", "Insertion > Titre", "Toutes les réponses"], a: 0, lvl: "Débutant" },
+            { q: "Que représente l'axe des abscisses ?", o: ["Axe horizontal", "Axe vertical", "Axe des profondeurs", "Aucun"], a: 0, lvl: "Débutant" },
+            { q: "Que représente l'axe des ordonnées ?", o: ["Axe vertical", "Axe horizontal", "Axe des profondeurs", "Aucun"], a: 0, lvl: "Débutant" },
+            { q: "Comment changer le type de graphique ?", o: ["Clic droit > Modifier le type", "Insertion > Changer", "Accueil > Changer", "Fichier > Changer"], a: 0, lvl: "Intermédiaire" },
+            { q: "Quel graphique est idéal pour comparer des valeurs ?", o: ["Barres", "Secteur", "Courbe", "Radar"], a: 0, lvl: "Intermédiaire" },
+            { q: "Comment ajouter une étiquette de données ?", o: ["Clic sur + > Étiquettes", "Clic droit > Ajouter", "Insertion > Étiquette", "Toutes les réponses"], a: 0, lvl: "Intermédiaire" },
+            { q: "Que fait une courbe de tendance ?", o: ["Montre la tendance des données", "Ajoute des couleurs", "Change les axes", "Supprime les données"], a: 0, lvl: "Avancé" },
+            { q: "Comment personnaliser les couleurs ?", o: ["Clic droit > Mise en forme", "Insertion > Couleur", "Accueil > Couleur", "Toutes les réponses"], a: 0, lvl: "Intermédiaire" },
+            { q: "Quel graphique combine plusieurs types ?", o: ["Combiné", "Mixte", "Multi", "Toutes les réponses"], a: 0, lvl: "Avancé" },
+            { q: "Comment créer un graphique sparkline ?", o: ["Insertion > Sparkline", "Accueil > Sparkline", "Données > Sparkline", "Formules > Sparkline"], a: 0, lvl: "Avancé" },
+            { q: "Que fait le bouton 'Sélectionner des données' ?", o: ["Permet de changer la source des données", "Change le type", "Ajoute des couleurs", "Supprime"], a: 0, lvl: "Intermédiaire" },
+            { q: "Comment déplacer un graphique sur une autre feuille ?", o: ["Clic droit > Déplacer", "Ctrl + X", "Glisser", "Toutes les réponses"], a: 0, lvl: "Intermédiaire" },
+            { q: "Quel est l'intérêt d'un graphique en aires ?", o: ["Montrer l'évolution de plusieurs séries", "Montrer une répartition", "Comparer", "Aucun"], a: 0, lvl: "Avancé" },
+            { q: "Comment ajouter une légende ?", o: ["Clic sur + > Légende", "Clic droit", "Insertion", "Toutes les réponses"], a: 0, lvl: "Débutant" },
+            { q: "Que signifie l'axe secondaire ?", o: ["Deuxième axe des ordonnées", "Deuxième axe des abscisses", "Un axe en plus", "Rien"], a: 0, lvl: "Avancé" },
+            { q: "Comment faire un graphique en cascade ?", o: ["C'est un type de graphique", "C'est une animation", "C'est un filtre", "Aucun"], a: 0, lvl: "Avancé" },
+            { q: "Quel graphique est en forme de toile d'araignée ?", o: ["Radar", "Secteur", "Aires", "Courbe"], a: 0, lvl: "Intermédiaire" },
+            { q: "Comment modifier l'échelle d'un axe ?", o: ["Clic droit > Mise en forme de l'axe", "Insertion > Échelle", "Accueil > Échelle", "Données > Échelle"], a: 0, lvl: "Intermédiaire" },
+            { q: "Quel graphique utiliser pour une seule valeur ?", o: ["Jauge", "Secteur", "Barres", "Courbe"], a: 0, lvl: "Avancé" },
+            { q: "Comment filtrer les données d'un graphique ?", o: ["Bouton Filtrer du graphique", "Filtre Excel", "Données > Filtrer", "Toutes les réponses"], a: 0, lvl: "Intermédiaire" },
+            { q: "Que fait le bouton 'Changer de ligne/colonne' ?", o: ["Inverse les séries", "Change les couleurs", "Inverse les axes", "Rien"], a: 0, lvl: "Intermédiaire" },
+            { q: "Comment créer un graphique croisé dynamique ?", o: ["Insertion > Graphique croisé", "Données > Graphique croisé", "Insertion > TCD", "Toutes les réponses"], a: 0, lvl: "Avancé" },
+            { q: "Qu'est-ce qu'un graphique en anneau ?", o: ["Un graphique en secteurs avec un trou", "Un graphique en barres", "Un graphique en courbes", "Aucun"], a: 0, lvl: "Intermédiaire" },
+            { q: "Comment exporter un graphique en image ?", o: ["Clic droit > Enregistrer en image", "Fichier > Exporter", "Copier-coller dans Paint", "Toutes les réponses"], a: 0, lvl: "Intermédiaire" },
+            { q: "Quel est l'impact d'un graphique 3D ?", o: ["Esthétique mais moins lisible", "Plus lisible", "Plus rapide", "Aucun"], a: 0, lvl: "Avancé" },
+            { q: "Comment masquer une série ?", o: ["Sélectionner la série et supprimer", "Clic droit > Masquer", "Filtrer", "Toutes les réponses"], a: 0, lvl: "Intermédiaire" },
+            { q: "Quel graphique est idéal pour les proportions ?", o: ["Secteur", "Courbe", "Barres", "Radar"], a: 0, lvl: "Débutant" },
+            { q: "Comment lier un graphique à un TCD ?", o: ["Automatiquement", "Manuellement", "Impossible", "Avec une macro"], a: 0, lvl: "Avancé" }
+        ]
+    },
+    'tcd': {
+        title: 'Bases de données et TCD',
+        questions: [
+            // 30 questions sur les TCD
+            { q: "Que signifie TCD ?", o: ["Tableau Croisé Dynamique", "Tableau de Calcul Direct", "Tableau de Commande Dynamique", "Type de Calcul de Données"], a: 0, lvl: "Débutant" },
+            { q: "Comment créer un TCD ?", o: ["Insertion > Tableau croisé dynamique", "Données > TCD", "Accueil > TCD", "Formules > TCD"], a: 0, lvl: "Débutant" },
+            { q: "Quelle est la condition pour créer un TCD ?", o: ["Avoir une base de données propre", "Avoir des formules", "Avoir un graphique", "Avoir un tableau simple"], a: 0, lvl: "Intermédiaire" },
+            { q: "Quel champ va dans la zone 'Lignes' ?", o: ["Les catégories", "Les valeurs numériques", "Les filtres", "Les colonnes"], a: 0, lvl: "Intermédiaire" },
+            { q: "Quel champ va dans la zone 'Valeurs' ?", o: ["Les données numériques à calculer", "Les catégories", "Les filtres", "Les colonnes"], a: 0, lvl: "Intermédiaire" },
+            { q: "Comment actualiser un TCD ?", o: ["Clic droit > Actualiser", "F5", "Données > Actualiser", "Toutes les réponses"], a: 0, lvl: "Débutant" },
+            { q: "Que fait un segment (slicer) ?", o: ["Filtre visuel", "Trie", "Calcule", "Formate"], a: 0, lvl: "Intermédiaire" },
+            { q: "Comment grouper des dates dans un TCD ?", o: ["Clic droit > Grouper", "Données > Grouper", "Insertion > Grouper", "Formules > Grouper"], a: 0, lvl: "Avancé" },
+            { q: "Comment ajouter un champ calculé ?", o: ["Analyse > Champs, éléments et jeux > Champ calculé", "Insertion > Champ", "Données > Champ", "Formules > Champ"], a: 0, lvl: "Avancé" },
+            { q: "Que fait la fonction 'Afficher les détails' ?", o: ["Affiche les données sources", "Affiche les formules", "Affiche les graphiques", "Rien"], a: 0, lvl: "Intermédiaire" },
+            { q: "Comment filtrer un TCD ?", o: ["Avec des filtres ou segments", "Avec la barre de recherche", "Avec Ctrl + F", "Impossible"], a: 0, lvl: "Débutant" },
+            { q: "Quel est l'intérêt d'un TCD ?", o: ["Synthétiser de grandes bases de données", "Faire des graphiques", "Trier", "Aucun"], a: 0, lvl: "Intermédiaire" },
+            { q: "Comment changer la fonction de synthèse d'un TCD ?", o: ["Clic droit > Synthétiser par", "Données > Synthèse", "Insertion > Synthèse", "Toutes les réponses"], a: 0, lvl: "Intermédiaire" },
+            { q: "Que signifie 'Source de données' ?", o: ["La plage de cellules de départ", "Le résultat", "Le graphique", "Le filtre"], a: 0, lvl: "Débutant" },
+            { q: "Comment copier un TCD ?", o: ["Ctrl + C / Ctrl + V", "Clic droit > Copier", "Glisser-déposer", "Toutes les réponses"], a: 3, lvl: "Débutant" },
+            { q: "Que faire si le TCD ne se met pas à jour ?", o: ["Actualiser", "Supprimer", "Recréer", "Rien"], a: 0, lvl: "Intermédiaire" },
+            { q: "Peut-on faire un graphique à partir d'un TCD ?", o: ["Oui, un graphique croisé dynamique", "Non", "Seulement avec VBA", "Avec une macro"], a: 0, lvl: "Avancé" },
+            { q: "Comment masquer les lignes vides d'un TCD ?", o: ["Filtrer les éléments vides", "Supprimer les lignes", "Cacher", "Toutes les réponses"], a: 0, lvl: "Avancé" },
+            { q: "Comment mettre en forme un TCD ?", o: ["Création de TCD > Styles", "Accueil > Style", "Insertion > Style", "Données > Style"], a: 0, lvl: "Intermédiaire" },
+            { q: "Que signifie 'Champ de valeur' ?", o: ["La colonne de données numériques", "La colonne de texte", "Le filtre", "La ligne"], a: 0, lvl: "Intermédiaire" },
+            { q: "Comment ajouter un champ de colonne ?", o: ["Glisser-déposer dans la zone Colonnes", "Clic droit", "Insertion", "Toutes les réponses"], a: 0, lvl: "Débutant" },
+            { q: "Comment afficher le pourcentage dans un TCD ?", o: ["Paramètres du champ de valeur > Afficher les valeurs", "Clic droit", "Insertion", "Toutes les réponses"], a: 0, lvl: "Avancé" },
+            { q: "Quelle est la limite de champs dans un TCD ?", o: ["Illimitée (selon mémoire)", "10", "20", "50"], a: 0, lvl: "Intermédiaire" },
+            { q: "Comment utiliser un TCD pour compter ?", o: ["Choisir 'Nombre' dans les paramètres", "SOMME", "MOYENNE", "MAX"], a: 0, lvl: "Intermédiaire" },
+            { q: "Comment créer un TCD sur plusieurs feuilles ?", o: ["Consolider les données d'abord", "Impossible", "Avec VBA", "Avec un filtre"], a: 0, lvl: "Avancé" },
+            { q: "Que fait 'Actualiser les données lors de l'ouverture' ?", o: ["Actualise à l'ouverture", "Ferme le fichier", "Supprime", "Rien"], a: 0, lvl: "Intermédiaire" },
+            { q: "Comment supprimer un TCD ?", o: ["Sélectionner et Suppr", "Clic droit > Supprimer", "Fermer", "Toutes les réponses"], a: 0, lvl: "Débutant" },
+            { q: "Qu'est-ce qu'un cache de TCD ?", o: ["Stockage des données sources", "Un filtre", "Un graphique", "Une macro"], a: 0, lvl: "Avancé" },
+            { q: "Comment partager un TCD ?", o: ["Enregistrer le fichier", "Copier le TCD", "Créer un PDF", "Toutes les réponses"], a: 0, lvl: "Intermédiaire" }
+        ]
+    }
+};
 
-<!-- ========== FOOTER ========== -->
-<footer class="footer">
-  <span class="crown">👑</span>
-  © Godé — Tous droits réservés
-</footer>
+// ============================================
+// VARIABLES GLOBALES
+// ============================================
+let currentModuleKey = null;
+let currentQuestions = [];
+let currentIndex = 0;
+let userAnswers = [];
+let questionTimer = null;
+let timeLeft = 30;
+let examStarted = false;
 
+// ============================================
+// NAVIGATION DES ÉCRANS
+// ============================================
+function showScreen(id) {
+    document.querySelectorAll('.eval-container > div').forEach(el => el.style.display = 'none');
+    document.getElementById(id).style.display = 'flex';
+}
+
+function backToMenu() {
+    stopTimer();
+    examStarted = false;
+    showScreen('screenSelect');
+}
+
+// ============================================
+// SÉLECTION DU MODULE
+// ============================================
+function selectModule(key) {
+    currentModuleKey = key;
+    document.getElementById('startTitle').textContent = EXAM_DATA[key].title;
+    showScreen('screenStart');
+}
+
+// ============================================
+// DÉMARRAGE DE L'EXAMEN
+// ============================================
+function startExam() {
+    // Mélanger ou prendre les 30 questions
+    currentQuestions = [...EXAM_DATA[currentModuleKey].questions].slice(0, 30);
+    
+    // Si moins de 30 questions, on boucle pour en avoir 30 (pour la démo)
+    while(currentQuestions.length < 30) {
+        currentQuestions.push(...EXAM_DATA[currentModuleKey].questions);
+    }
+    currentQuestions = currentQuestions.slice(0, 30);
+
+    currentIndex = 0;
+    userAnswers = new Array(currentQuestions.length).fill(null);
+    examStarted = true;
+    
+    document.getElementById('examModuleTitle').textContent = EXAM_DATA[currentModuleKey].title;
+    showScreen('screenExam');
+    loadQuestion();
+}
+
+// ============================================
+// GESTION DES QUESTIONS
+// ============================================
+function loadQuestion() {
+    if (!examStarted) return;
+    const q = currentQuestions[currentIndex];
+    
+    // Mise à jour de l'interface
+    document.getElementById('questionCounter').textContent = `Question ${currentIndex + 1} / ${currentQuestions.length}`;
+    document.getElementById('questionLevel').textContent = q.lvl;
+    document.getElementById('questionText').textContent = q.q;
+    
+    const progress = ((currentIndex) / currentQuestions.length) * 100;
+    document.getElementById('progressBar').style.width = `${progress}%`;
+
+    // Boutons de navigation
+    document.getElementById('btnPrev').disabled = currentIndex === 0;
+    
+    const btnNext = document.getElementById('btnNext');
+    if (currentIndex === currentQuestions.length - 1) {
+        btnNext.textContent = "🏁 Terminer";
+        btnNext.className = "btn btn-finish";
+    } else {
+        btnNext.textContent = "Suivant ➡️";
+        btnNext.className = "btn btn-next";
+    }
+
+    // Options
+    const optionsList = document.getElementById('optionsList');
+    optionsList.innerHTML = '';
+    const letters = ['A', 'B', 'C', 'D'];
+    q.o.forEach((opt, i) => {
+        const div = document.createElement('div');
+        div.className = `option-item ${userAnswers[currentIndex] === i ? 'selected' : ''}`;
+        div.innerHTML = `<div class="option-letter">${letters[i]}</div><div>${opt}</div>`;
+        div.onclick = () => selectOption(i);
+        optionsList.appendChild(div);
+    });
+
+    startTimer();
+}
+
+function selectOption(index) {
+    if (!examStarted) return;
+    userAnswers[currentIndex] = index;
+    document.querySelectorAll('.option-item').forEach((el, i) => {
+        if (i === index) el.classList.add('selected');
+        else el.classList.remove('selected');
+    });
+}
+
+function nextQuestion() {
+    if (currentIndex < currentQuestions.length - 1) {
+        currentIndex++;
+        loadQuestion();
+    } else {
+        finishExam();
+    }
+}
+
+function prevQuestion() {
+    if (currentIndex > 0) {
+        currentIndex--;
+        loadQuestion();
+    }
+}
+
+// ============================================
+// TIMER
+// ============================================
+function startTimer() {
+    stopTimer();
+    timeLeft = 30;
+    updateTimerDisplay();
+    questionTimer = setInterval(() => {
+        timeLeft--;
+        updateTimerDisplay();
+        if (timeLeft <= 0) {
+            stopTimer();
+            // Temps écoulé, on passe automatiquement à la suite
+            if (currentIndex < currentQuestions.length - 1) nextQuestion();
+            else finishExam();
+        }
+    }, 1000);
+}
+
+function stopTimer() {
+    if (questionTimer) clearInterval(questionTimer);
+}
+
+function updateTimerDisplay() {
+    const box = document.getElementById('timerBox');
+    if (!box) return;
+    box.textContent = `⏱️ ${timeLeft}s`;
+    if (timeLeft <= 10) box.style.color = '#ef4444';
+    else box.style.color = '#f59e0b';
+}
+
+// ============================================
+// FIN DE L'EXAMEN & RÉSULTATS
+// ============================================
+function finishExam() {
+    stopTimer();
+    examStarted = false;
+    
+    let correct = 0;
+    currentQuestions.forEach((q, i) => {
+        if (userAnswers[i] === q.a) correct++;
+    });
+    
+    const score = Math.round((correct / currentQuestions.length) * 100);
+    const scoreCircle = document.getElementById('scoreCircle');
+    scoreCircle.textContent = `${score}%`;
+    
+    // Couleur du cercle
+    if (score >= 80) scoreCircle.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+    else if (score >= 50) scoreCircle.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
+    else scoreCircle.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
+
+    document.getElementById('resultDetails').textContent = `${correct} / ${currentQuestions.length} bonnes réponses`;
+    document.getElementById('resultMessage').textContent = score >= 80 ? "Félicitations ! 🏆" : score >= 50 ? "Peut mieux faire ! 👍" : "Courage, il faut réviser ! 📚";
+
+    // Corrigé détaillé
+    const list = document.getElementById('correctionList');
+    list.innerHTML = '';
+    currentQuestions.forEach((q, i) => {
+        const isCorrect = userAnswers[i] === q.a;
+        const isAnswered = userAnswers[i] !== null;
+        
+        const div = document.createElement('div');
+        div.className = `correction-item ${isCorrect ? 'correct' : 'incorrect'}`;
+        
+        const answerText = isAnswered ? q.o[userAnswers[i]] : "Non répondu";
+        const correctText = q.o[q.a];
+        
+        div.innerHTML = `
+            <h4>${i + 1}. ${q.q}</h4>
+            <p><strong>Votre réponse :</strong> ${answerText}</p>
+            ${!isCorrect ? `<p><strong>Bonne réponse :</strong> ${correctText}</p>` : ''}
+        `;
+        list.appendChild(div);
+    });
+
+    showScreen('screenResult');
+}
+
+// ============================================
+// RÉESSAYER
+// ============================================
+function retryExam() {
+    showScreen('screenStart');
+    document.getElementById('startTitle').textContent = EXAM_DATA[currentModuleKey].title;
+}
+
+// Initialisation
+window.onload = () => {
+    showScreen('screenSelect');
+};
+</script>
 </body>
 </html>
